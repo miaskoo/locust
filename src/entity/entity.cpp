@@ -190,3 +190,7 @@ void entity::setPivot(float x, float y) {
 void entity::setScale(float x, float y, float z) {
     setScale({x,y,z});
 }
+
+size_t entity::getCountAction() {
+    return actions.size();
+}

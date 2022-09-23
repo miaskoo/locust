@@ -44,5 +44,8 @@ actionBase* factoryAction::createActionSequence(std::vector<actionBase *> action
 
 actionBase* factoryAction::createRotateLerpAction(quaternion targetRotate, unsigned int time, std::function<void()> callback) {
     return new actionLerpRotate(targetRotate, time, callback);
-     
+}
+
+actionBase* factoryAction::createMoveToAction() {
+    return nullptr;
 }

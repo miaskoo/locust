@@ -175,6 +175,9 @@ void renderSystem::unregisterEntity(entity* object) {
     auto iter = std::remove_if(objects.begin(), objects.end(), [object](const auto& element){
         return object == element;
     });
+    if (iter == objects.end()) {
+        return;
+    }
     objects.erase(iter);
 }
 

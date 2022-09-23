@@ -32,6 +32,7 @@ public:
     void removeFromParent();
     
     void addAction(actionBase* action);
+    size_t getCountAction();
     void clearAllActions();
     
     bool isDirty() const;
@@ -59,7 +60,7 @@ protected:
     entity() = delete;
     entity(dimension aType);
     
-    void update(float dt);
+    virtual void update(float dt);
     
     void setParent(std::weak_ptr<entity> aParent);
     void setWeakPointerThis(std::weak_ptr<entity> aWThis);
