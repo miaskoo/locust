@@ -1,6 +1,8 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <functional>
+#include <memory>
 #include "math.h"
 
 class entity;
@@ -48,15 +50,12 @@ struct vec {
     vec(float aX, float aY) {
         value[0] = aX;
         value[1] = aY;
-        value[2] = valueEmpty;
-        value[3] = valueEmpty;
     }
     
     vec(float aX, float aY, float aZ) {
         value[0] = aX;
         value[1] = aY;
         value[2] = aZ;
-        value[3] = valueEmpty;
     }
     
     vec(float aX, float aY, float aZ, float aW) {
@@ -78,17 +77,17 @@ struct vec {
     }
     
     float& operator[] (size_t idx) {
-        if (idx > countVec) {
-            return valueEmpty;
+        if (idx < countVec) {
+            return value[idx];
         }
-        return value[idx];
+        return valueEmpty;
     }
     
     float operator[] (size_t idx) const {
-        if (idx > countVec) {
-            return valueEmpty;
+        if (idx < countVec) {
+            return value[idx];
         }
-        return value[idx];
+        return valueEmpty;
     }
     
     template <typename T>

@@ -8,7 +8,8 @@
 #ifdef MACOS
 #include "GLUT/glut.h"
 #else
-#include "freeglut/glut.h"
+#include "glew/glew.h"
+#include "freeglut/freeglut.h"
 #endif
 #include "glFunctional.h"
 

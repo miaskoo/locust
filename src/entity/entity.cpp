@@ -4,6 +4,7 @@
 #include "transformComponent.h"
 #include "renderSystem.h"
 #include "mouseSystem.h"
+#include <iterator>
 
 entity::entity(dimension aType) : type(aType) {}
 

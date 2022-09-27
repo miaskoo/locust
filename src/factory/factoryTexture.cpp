@@ -6,7 +6,8 @@
 #ifdef MACOS
 #include "GLUT/glut.h"
 #else
-#include <freeglut/freeglut.h>
+#include "glew/glew.h"
+#include "freeglut/freeglut.h"
 #endif
 
 unsigned int factoryTexture::createTexture(const std::string& dir) {

@@ -1,4 +1,5 @@
 #include "boardModel.h"
+#include <iterator>
 
 void boardModel::init(unsigned int w, unsigned int h) {
     freeChipPool.clear();

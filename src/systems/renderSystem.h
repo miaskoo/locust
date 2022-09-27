@@ -3,6 +3,7 @@
 #include <atomic>
 #include <memory>
 #include <vector>
+#include <string>
 #include "componentContainer.h"
 
 class entityCash;

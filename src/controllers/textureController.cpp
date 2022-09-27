@@ -1,5 +1,6 @@
 #include "textureController.h"
 #include "factoryTexture.h"
+#include <assert.h>
 
 
 unsigned int textureController::getTextureIdx(const std::string& dir) {
