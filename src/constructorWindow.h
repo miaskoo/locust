@@ -50,7 +50,7 @@ private:
     size_t getCashIdx(typeCash type);
     
     const int screenW = 1024;
-    const int screenH = 900;
+    const int screenH = 800;
     
     int currentWindow = 0;
     
@@ -74,6 +74,8 @@ private:
     std::shared_ptr<entity> fpsLabel;
     std::shared_ptr<entity> timeLabel;
     std::shared_ptr<entity> mousePosLabel;
+    
+    std::shared_ptr<entity> swapLine;
     
     std::atomic_bool switchCash = false;
     std::atomic_bool cashDirty = false;

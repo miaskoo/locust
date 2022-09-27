@@ -14,7 +14,7 @@ public:
     static actionBase* createChangeColorAction(color4b targetColor, unsigned int time, std::function<void()> callback = nullptr);
     static actionBase* createActionSequence(std::vector<actionBase*> actions, std::function<void()> callback = nullptr);
     static actionBase* createRotateLerpAction(quaternion targetRotate, unsigned int time, std::function<void()> callback = nullptr);
-    static actionBase* createMoveToAction();
+    static actionBase* createMoveToAction(vec3f targetPos, unsigned int time, std::function<void()> callback = nullptr);
 private:
     factoryAction() = default;
     ~factoryAction() = default;

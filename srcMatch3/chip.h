@@ -1,22 +1,30 @@
 #pragma once
 #include <utility>
+#include "struct.h"
 
-enum class chipColor {RED, BLUE, GREEN, PURPURE, UNKNOWN};
+enum class chipColor {RED = 0U, GREEN = 1U, YELLOW = 2U, PINK = 3U, SIZE = 4U, UNKNOWN = 99U};
+enum class chipState {SWAP, RETURN, FALL, IDLE, HIDE, SHOW};
 
 class chip {
 public:
     chip() = delete;
-    chip(const std::pair<unsigned int, unsigned int>& aId);
+    chip(const pairInt& aId);
     ~chip() = default;
     
     void setColor(chipColor aColor);
-    void setBindId(const std::pair<unsigned int, unsigned int>& aBindId);
+    void setBindId(const pairInt& aBindId);
     
     chipColor getColor() const;
-    std::pair<unsigned int, unsigned int> getBindId() const;
-    std::pair<unsigned int, unsigned int> getId() const;
+    pairInt getBindId() const;
+    pairInt getId() const;
+    
+    void setState(chipState aState);
+    chipState getState() const;
+    bool isAnimationProgress = false;
 private:
     chipColor color = chipColor::UNKNOWN;
-    std::pair<unsigned int, unsigned int> bindId;
-    std::pair<unsigned int, unsigned int> id;
+    pairInt bindId;
+    pairInt chipId;
+    
+    chipState state = chipState::IDLE;
 };

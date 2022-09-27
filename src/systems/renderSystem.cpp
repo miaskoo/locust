@@ -152,7 +152,7 @@ void renderSystem::renderLabel(const std::string &text, void *font) {
 }
 
 void renderSystem::renderSprite() {
-    glForwarder::drawTextureQuad(1);
+    glForwarder::drawTextureQuad(1.f);
 }
 
 void renderSystem::setWindowSize(int w, int h) {

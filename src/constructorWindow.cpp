@@ -2,6 +2,8 @@
 
 #include "renderComponent.h"
 #include "transformComponent.h"
+#include "clickComponent.h"
+#include "colorComponent.h"
 #include "scene.h"
 
 #include "renderSystem.h"
@@ -57,6 +59,30 @@ void constructorWindow::updateWindow() {
         if (dt > 0.f) {
             updateScene(dt);
         }
+        if (swapLine) {
+            if (auto supervisedEntity = mouseSystem::getInstance()->getSupervisedEntity()) {
+                renderSystem::getInstance()->registerEntity(swapLine.get());
+                auto mouseSystemInstane = mouseSystem::getInstance();
+                if (auto component = supervisedEntity->getComponent<clickComponent>()) {
+                    if (component->getTypeClickComponent() == typeClickComponent::SWAP) {
+                        auto transform = supervisedEntity->getComponent<transformComponent>();
+                        auto pos = transform->getCashPos() + transform->getCashSize() / 2.f;
+                        swapLine->setPos(pos);
+                        auto mousePos = vec3f(mouseSystemInstane->getMousePosX(), mouseSystemInstane->getMousePosY());
+                        auto sizeX = std::abs(std::abs(mousePos.x()) - std::abs(pos.x()));
+                        auto sizeY = std::abs(std::abs(mousePos.y()) - std::abs(pos.y()));
+                        auto size = vec3f(2, sizeX + sizeY);
+                        swapLine->setSize(size);
+                        auto angle = vec3f::getAngle(pos, mousePos);
+                        swapLine->setRotate(0, 0, angle);
+                    }
+                }
+            }
+            else {
+                renderSystem::getInstance()->unregisterEntity(swapLine.get());
+            }
+        }
+        
         
         auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         dt = currentTime - lastTime;
@@ -70,7 +96,8 @@ void constructorWindow::updateWindow() {
 
 void constructorWindow::updateScene(float dt) {
     auto clickState = click.load();
-    mouseSystem::getInstance()->update(mouseX.load(), mouseY.load(), clickState);
+    mouseSystem::getInstance()->setMouseState(clickState);
+    mouseSystem::getInstance()->update(mouseX.load(), mouseY.load());
     if (clickState == stateMouse::CLICK_OUT) {
         click.store(stateMouse::IDLE);
     }
@@ -167,6 +194,7 @@ void constructorWindow::initGlutFunc() {
     glutIdleFunc(glutIdleFuncForwarder);
     glutMouseFunc(glutMouseFuncForwarder);
     glutPassiveMotionFunc(glutPassiveMotionFuncForwarder);
+    glutMotionFunc(glutPassiveMotionFuncForwarder);
     currentWindow = glutGetWindow();
 }
 
@@ -215,6 +243,12 @@ void constructorWindow::createInfoNode() {
     uiNode->addChild(fpsLabel);
     uiNode->addChild(timeLabel);
     uiNode->addChild(mousePosLabel);
+    
+    swapLine = factoryEntity::createSprite("whitePixel.png");
+    swapLine->setAnchor(vec2f(0.0f,0.0f));
+    swapLine->setPivot(vec2f(1.0f,1.0f));
+    swapLine->getComponent<colorComponent>()->setAlphaMode(false);
+    mainScene->addChild(swapLine);
 }
 
 void constructorWindow::destroyInfoNode() {

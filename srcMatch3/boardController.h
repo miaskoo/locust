@@ -8,19 +8,31 @@ public:
     boardController() = default;
     ~boardController() = default;
     
-    void init(unsigned int w, unsigned int h);
-    void initNewGame(const std::vector<std::vector<chipColor>>& colors);
+    void init(unsigned int w, unsigned int h, vec2f aChipSize, const swapCallback& callback);
+    void resetBoard();
+    void attachViewToEntity(std::shared_ptr<entity> scene);
     
     void updateView();
-    void swapChip(const std::pair<unsigned int, unsigned int>& from, const std::pair<unsigned int, unsigned int>& to);
-    void removeChip(const std::pair<unsigned int, unsigned int>& where);
-    void spawnChip(const std::pair<unsigned int, unsigned int>& where);
+    void updateModel();
     
-    const std::vector<std::vector<chip>>& getChipPool();
-    const std::vector<std::vector<chipPlace>>& getChipPlacePool();
+    chipPlace* getChipPlaceById(const pairInt& where);
+    chipPlace* getChipPlaceByDirection(chip* object, swapDirection direction);
+    
+    void swapChip(chip* caller, chip* receiver);
+    bool boardIsStable();
+    void setLock(bool value);
+    bool isLock();
+    
+    bool isHaveAnim();
+    
+    std::vector<std::vector<std::shared_ptr<entity>>>& getChipButtons();
 private:
-    boardView visual;
+    void generateBoardColor();
+    void setDefaultBind();
+    void initViewAllChips();
+    
+    std::shared_ptr<boardView> view;
     boardModel model;
     
-    unsigned int countColor = 0U;
+    bool lock;
 };

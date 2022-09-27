@@ -1,12 +1,12 @@
 #include "chip.h"
 
-chip::chip(const std::pair<unsigned int, unsigned int>& aId) : id(aId) {}
+chip::chip(const pairInt& aId) : chipId(aId) {}
 
 void chip::setColor(chipColor aColor) {
     color = aColor;
 }
 
-void chip::setBindId(const std::pair<unsigned int, unsigned int>& aBindId) {
+void chip::setBindId(const pairInt& aBindId) {
     bindId = aBindId;
 }
 
@@ -14,10 +14,18 @@ chipColor chip::getColor() const {
     return color;
 }
 
-std::pair<unsigned int, unsigned int> chip::getBindId() const {
+pairInt chip::getBindId() const {
     return bindId;
 }
 
-std::pair<unsigned int, unsigned int> chip::getId() const {
-    return id;
+pairInt chip::getId() const {
+    return chipId;
+}
+
+void chip::setState(chipState aState) {
+    state = aState;
+}
+
+chipState chip::getState() const {
+    return state;
 }

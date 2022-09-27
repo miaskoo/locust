@@ -15,61 +15,66 @@ void mouseSystem::cleanup() {
     instance = nullptr;
 }
 
-void mouseSystem::update(int xPos, int yPos, stateMouse state) {
+void mouseSystem::update(int xPos, int yPos) {
+    mousePosX = xPos;
+    mousePosY = yPos;
+    vec2f posMouse(static_cast<float>(xPos), static_cast<float>(yPos));
     if (supervisedEntity) {
-        if (state == stateMouse::CLICK_OUT) {
-            if (auto callback = supervisedEntity->getComponent<clickComponent>()->getClickCallback()) {
-                callback();
-            }
-            supervisedEntity = nullptr;
+        if (mouseState != stateMouse::CLICK_OUT) {
+            return;
         }
+        auto component = supervisedEntity->getComponent<clickComponent>();
+        auto typeComponent = component->getTypeClickComponent();
+        if (typeComponent == typeClickComponent::BUTTON) {
+            auto callback = static_cast<buttonComponent*>(component)->getClickCallback();
+            if (callback) {
+                callback(supervisedEntity);
+            }
+        }
+        else if (typeComponent == typeClickComponent::SWAP) {
+            auto transform = supervisedEntity->getComponent<transformComponent>();
+            auto callback = static_cast<swapComponent*>(component)->getSwapCallback();
+            if (callback) {
+                auto dir = functionHelper::getDirectionFromPoint(transform->getCashPos(), posMouse);
+                if (dir != swapDirection::UNKNOWN) {
+                    callback(supervisedEntity, dir);
+                }
+
+            }
+        }
+        supervisedEntity = nullptr;
         return;
     }
-    
     for (auto& obj : objects) {
-        auto bComponent = obj->getComponent<clickComponent>();
-        auto prevState = bComponent->getState();
-        auto newState = stateButton::WAIT;
-        auto component = obj->getComponent<transformComponent>();
-        vec3f pos = component->getCashPos();
-        vec3f size = component->getCashSize();
-        auto x1 = pos[0];
-        auto y1 = pos[1] - size[1];
-        auto x2 = pos[0] + size[0];
-        auto y2 = pos[1];
-        if (x1 > x2) {
-            std::swap(x1, x2);
-        }
-        if (y1 > y2) {
-            std::swap(y1, y2);
-        }
-        if (bComponent->isClickable()) {
-            if (xPos > x1 && xPos < x2 && yPos > y1 && yPos < y2) {
-                if (state == stateMouse::CLICK) {
+        auto component = obj->getComponent<clickComponent>();
+        auto newState = component->getState();
+        if (component->isClickable()) {
+            auto tComponent = obj->getComponent<transformComponent>();
+            bool isCover = functionHelper::poinInQuad2d(tComponent->getCashPos(), tComponent->getCashSize(), posMouse);
+            if (isCover) {
+                if (mouseState == stateMouse::CLICK && !supervisedEntity) {
                     newState = stateButton::PRESS;
-                    if (!supervisedEntity && prevState != newState) {
-                        supervisedEntity = obj;
-                    }
+                    supervisedEntity = obj->getWeakPtr().lock();
                 }
                 else {
                     newState = stateButton::COVER;
                 }
             }
+            else {
+                newState = stateButton::WAIT;
+            }
         }
         else {
             newState = stateButton::LOCK;
         }
-
-        if (prevState != newState) {
-            bComponent->setState(newState);
-            obj->getComponent<textureButtonComponent>()->updateTexture(newState);
-        }
-        if (newState != stateButton::WAIT) {
-            break;
+        
+        
+        if (component->getState() != newState) {
+            component->setState(newState);
+            obj->getComponent<textureButtonComponent>()->updateTexture(component->getState());
         }
     }
 }
-
 
 void mouseSystem::registerEntity(entity* object) {
     if (!object || std::find(objects.begin(), objects.end(), object) != objects.end()) {
@@ -85,4 +90,24 @@ void mouseSystem::unregisterEntity(entity* object) {
         return object == element;
     });
     objects.erase(iter);
+}
+
+void mouseSystem::setMouseState(const stateMouse &aMouseState) {
+    mouseState = aMouseState;
+}
+
+stateMouse mouseSystem::getMouseState() {
+    return mouseState;
+}
+
+std::shared_ptr<entity> mouseSystem::getSupervisedEntity() {
+    return supervisedEntity;
+}
+
+int mouseSystem::getMousePosX() {
+    return mousePosX;
+}
+
+int mouseSystem::getMousePosY() {
+    return mousePosY;
 }

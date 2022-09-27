@@ -8,8 +8,9 @@ void scene::updateCash(size_t freeCashIdx, size_t busyCashIdx) {
 
 void scene::updateCashChilds(size_t freeCashIdx, size_t busyCashIdx, entity* obj) {
     for (auto& child : obj->getChilds()) {
+        child->updateCash(freeCashIdx, busyCashIdx);
         if (child->isDirty()) {
-            child->updateCash(freeCashIdx, busyCashIdx);
+            child->unDirty();
         }
         updateCashChilds(freeCashIdx, busyCashIdx, child.get());
     }

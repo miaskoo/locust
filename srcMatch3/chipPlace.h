@@ -1,21 +1,22 @@
 #pragma once
 #include <utility>
+#include "struct.h"
 
 class chip;
 
 class chipPlace {
 public:
     chipPlace() = delete;
-    chipPlace(const std::pair<unsigned int, unsigned int>& aId);
+    chipPlace(const pairInt& aId);
     ~chipPlace() = default;
     
     void bindChip(chip* aChip);
     void unbindChip();
     chip* getBindedChip() const;
     chip* getBindedChipC() const;
-    std::pair<unsigned int, unsigned int> getId() const;
+    pairInt getId() const;
 private:
     chip* bindedChip = nullptr;
     
-    const std::pair<unsigned int, unsigned int> id;
+    const pairInt currentId;
 };

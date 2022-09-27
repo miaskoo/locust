@@ -15,10 +15,7 @@ protected:
 
 class entity : public componentContainer {
     friend class factoryEntity;
-    friend class factoryScene;
-    friend class constructorWindow;
 public:
-    
     ~entity();
     dimension getDimension() const;
     
@@ -36,6 +33,9 @@ public:
     void clearAllActions();
     
     bool isDirty() const;
+    void markDirty();
+    void unDirty();
+    
     void setIgnoreSorting(bool value);
     bool isIgnoreSorting() const;
     
@@ -56,19 +56,18 @@ public:
     void setPivot(float x, float y);
     void setScale(float x, float y, float z = 0.f);
     transformComponentInterface* getTransformComponent();
+    
+    std::weak_ptr<entity> getWeakPtr();
+    void setWeakPtrThis(std::weak_ptr<entity> aWThis);
+    
+    virtual void update(float dt);
 protected:
     entity() = delete;
     entity(dimension aType);
     
-    virtual void update(float dt);
-    
     void setParent(std::weak_ptr<entity> aParent);
-    void setWeakPointerThis(std::weak_ptr<entity> aWThis);
     
     virtual void createCash() {}
-    
-    void markDirty();
-    void unDirty();
     
     std::array<std::shared_ptr<entityCash>, static_cast<size_t>(typeCash::COUNT)> cashArray;
     std::weak_ptr<entity> wThis;

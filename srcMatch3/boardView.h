@@ -4,26 +4,37 @@
 #include "chip.h"
 #include "struct.h"
 #include <vector>
+#include <map>
+#include "node.h"
 
-class entity;
-
-class boardView {
+class boardView : public node {
 public:
     boardView() = default;
     ~boardView() = default;
     
-    void init(unsigned int w, unsigned int h);
-    void initSprite(chip* aChip);
-    void showSprite(const std::pair<unsigned int, unsigned int>& id);
-    void hideSprite(const std::pair<unsigned int, unsigned int>& id);
-    void update(const std::vector<std::vector<chipPlace>>& places);
-   
+    void init(unsigned int w, unsigned int h, vec2f aChipSize, const swapCallback& callback);
+    void initViewChip(const chip* aChip);
+    void update(const std::vector<std::vector<chip>>& chips);
+    bool isHaveAction();
+    std::vector<std::vector<std::shared_ptr<entity>>>& getChipButtons();
 private:
-    vec3f getPosFromId(const std::pair<unsigned int, unsigned int>& id);
+    void showChip(const pairInt& chipId);
+    void hideChip(const pairInt& chipId);
+    vec3f getPosFromId(const pairInt& chipId);
     
-    bool isValidPos(vec3f& a, vec3f& b);
     std::string getTextureFromColor(chipColor color);
     
-    std::vector<std::vector<std::shared_ptr<entity>>> chipSprite;
+    bool isInit = false;
+    
     vec2f chipSize;
+    
+    std::vector<std::vector<std::shared_ptr<entity>>> chipButtons;
+    std::vector<std::vector<std::shared_ptr<entity>>> chipSprites;
+    std::map<pairInt, chipState> states;
+    
+    unsigned int countAction = 0U;
+    
+    const unsigned int timeMoveAction = 250;
+    const unsigned int timeFadeInAction = 250;
+    const unsigned int timeFadeOutAction = 250;
 };

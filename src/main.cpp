@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
     auto construct = constructorWindow::getInstance();
     construct->initWindow(argc, argv);
-    construct->initTextures({});
+    construct->initTextures({"greenChip.png", "pinkChip.png", "redChip.png", "yellowChip.png", "whitePixel.png"});
     construct->setGameScene(factoryScene::createGameScene());
     construct->createInfoNode();
     construct->initGlutFunc();

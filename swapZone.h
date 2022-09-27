@@ -1,13 +1,18 @@
-//
-//  swapZone.hpp
-//  locust
-//
-//  Created by Saiber Nico on 25.09.2022.
-//
+#pragma once
 
-#ifndef swapZone_hpp
-#define swapZone_hpp
+#include "node.h"
 
-#include <stdio.h>
+class swapZone : public node {
+public:
+    swapZone();
+    ~swapZone() = default;
+    virtual void createCash() override;
+    virtual void updateCash(size_t freeCashIdx, size_t busyCashIdx) override;
+protected:
+    class swapZoneCash : public nodeCash {
+    public:
+        swapZoneCash();
+        ~swapZoneCash() = default;
+    };
+};
 
-#endif /* swapZone_hpp */

@@ -4,6 +4,8 @@
 #include "object3d.h"
 #include "sprite.h"
 #include "button.h"
+#include "swapZone.h"
+
 #include "transformComponent.h"
 #include "renderComponent.h"
 #include "textureComponent.h"
@@ -23,7 +25,7 @@
 
 std::shared_ptr<entity> factoryEntity::createNode() {
     auto result = std::make_shared<node>();
-    result->setWeakPointerThis(result);
+    result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setAnchor({0.5f, 0.5f});
     component->setPivot({0.5f, 0.5f});
@@ -34,7 +36,7 @@ std::shared_ptr<entity> factoryEntity::createNode() {
 
 std::shared_ptr<entity> factoryEntity::createLabel(const std::string& text) {
     auto result = std::make_shared<label>();
-    result->setWeakPointerThis(result);
+    result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setAnchor({0.5f, 0.5f});
     component->setPivot({0.5f, 0.5f});
@@ -47,7 +49,7 @@ std::shared_ptr<entity> factoryEntity::createLabel(const std::string& text) {
 
 std::shared_ptr<entity> factoryEntity::createQuadrilateral() {
     auto result = std::make_shared<object3d>();
-    result->setWeakPointerThis(result);
+    result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f, 1.f});
     component->setAnchor(vec3f({0.5f,0.5f,0.0f}));
@@ -58,7 +60,7 @@ std::shared_ptr<entity> factoryEntity::createQuadrilateral() {
 
 std::shared_ptr<entity> factoryEntity::createTorus(size_t countSector) {
     auto result = std::make_shared<object3d>();
-    result->setWeakPointerThis(result);
+    result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f, 1.f});
     component->setAnchor(vec3f({0.5f,0.5f,0.0f}));
@@ -74,7 +76,7 @@ std::shared_ptr<entity> factoryEntity::createTorus(size_t countSector) {
 
 std::shared_ptr<entity> factoryEntity::createSprite(const std::string& dirTexture) {
     auto result = std::make_shared<sprite>();
-    result->setWeakPointerThis(result);
+    result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setAnchor({0.5f,0.5f});
     component->setPivot({0.5f,0.5f});
@@ -87,7 +89,7 @@ std::shared_ptr<entity> factoryEntity::createSprite(const std::string& dirTextur
 
 std::shared_ptr<entity> factoryEntity::createButton(const std::string& dirTextureNormal, const std::string& dirTextureCover, const std::string& dirTextureClick) {
     std::shared_ptr<entity> result = std::make_shared<button>();
-    result->setWeakPointerThis(result);
+    result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f});
     component->setAnchor({0.5, 0.5});
@@ -101,3 +103,21 @@ std::shared_ptr<entity> factoryEntity::createButton(const std::string& dirTextur
     result->createCash();
     return result;
 }
+
+std::shared_ptr<entity> factoryEntity::createSwapZone(const std::string& dirTextureNormal, const std::string& dirTextureCover, const std::string& dirTextureClick) {
+    std::shared_ptr<entity> result = std::make_shared<swapZone>();
+    result->setWeakPtrThis(result);
+    auto component = result->getTransformComponent();
+    component->setScale({1.f, 1.f});
+    component->setAnchor({0.5, 0.5});
+    component->setPivot({0.5, 0.5});
+    
+    auto texController = constructorWindow::getInstance()->getTextureController();
+    result->getComponent<textureButtonComponent>()->setTexButtonIdx(
+        texController->getTextureIdx(dirTextureNormal),
+        texController->getTextureIdx(dirTextureCover),
+        texController->getTextureIdx(dirTextureClick));
+    result->createCash();
+    return result;
+}
+

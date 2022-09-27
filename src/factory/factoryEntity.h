@@ -12,6 +12,7 @@ public:
     static std::shared_ptr<entity> createTorus(size_t countSector);
     static std::shared_ptr<entity> createSprite(const std::string& dirTexture = "");
     static std::shared_ptr<entity> createButton(const std::string& dirTextureNormal = "", const std::string& dirTextureCover = "", const std::string& dirTextureClick = "");
+    static std::shared_ptr<entity> createSwapZone(const std::string& dirTextureNormal = "", const std::string& dirTextureCover = "", const std::string& dirTextureClick = "");
 private:
     factoryEntity() = default;
     ~factoryEntity() = default;

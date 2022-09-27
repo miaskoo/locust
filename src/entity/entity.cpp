@@ -69,13 +69,16 @@ const std::vector<std::shared_ptr<entity>>& entity::getChilds() {
 }
 
 void entity::removeFromParent() {
-    if (parent.expired()) {
-        parent.lock()->removeChild(this);
-        parent.lock()->markDirty();
+    if (auto ptr = parent.lock()) {
+        ptr->removeChild(this);
+        ptr->markDirty();
     }
 }
 
-void entity::setWeakPointerThis(std::weak_ptr<entity> aWThis) {
+void entity::setWeakPtrThis(std::weak_ptr<entity> aWThis) {
+    if (auto ptr = wThis.lock()) {
+        return;
+    }
     wThis = aWThis;
 }
 
@@ -193,4 +196,8 @@ void entity::setScale(float x, float y, float z) {
 
 size_t entity::getCountAction() {
     return actions.size();
+}
+
+std::weak_ptr<entity> entity::getWeakPtr() {
+    return wThis;
 }

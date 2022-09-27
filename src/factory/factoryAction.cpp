@@ -5,6 +5,7 @@
 #include "actionChangeColor.h"
 #include "actionSequence.h"
 #include "actionLerpRotate.h"
+#include "actionMoveTo.h"
 
 actionBase* factoryAction::createRotateAction(vec3f axis, float angle, unsigned int time, std::function<void()> callback) {
     return new actionRotate(axis, angle, time, callback);
@@ -46,6 +47,6 @@ actionBase* factoryAction::createRotateLerpAction(quaternion targetRotate, unsig
     return new actionLerpRotate(targetRotate, time, callback);
 }
 
-actionBase* factoryAction::createMoveToAction() {
-    return nullptr;
+actionBase* factoryAction::createMoveToAction(vec3f targetPos, unsigned int time, std::function<void()> callback) {
+    return new actionMoveTo(targetPos, time, callback);
 }

@@ -10,7 +10,7 @@
 button::button() {
     addComponent<colorComponent>();
     addComponent<textureButtonComponent>();
-    addComponent<clickComponent>();
+    addComponent<buttonComponent>();
     addComponent<spriteComponent>();
     renderSystem::getInstance()->registerEntity(this);
     mouseSystem::getInstance()->registerEntity(this);
@@ -20,7 +20,7 @@ void button::updateCash(size_t freeCashIdx, size_t busyCashIdx) {
     node::updateCash(freeCashIdx, busyCashIdx);
     copyComponent(getCash(freeCashIdx)->getComponent<colorComponent>());
     copyComponent(getCash(freeCashIdx)->getComponent<textureComponent>());
-    copyComponent(getCash(freeCashIdx)->getComponent<clickComponent>());
+    copyComponent(getCash(freeCashIdx)->getComponent<buttonComponent>());
     copyComponent(getCash(freeCashIdx)->getComponent<spriteComponent>());
 }
 
@@ -33,10 +33,6 @@ void button::createCash() {
 button::buttonCash::buttonCash() {
     addComponent<colorComponent>();
     addComponent<textureComponent>();
-    addComponent<clickComponent>();
+    addComponent<buttonComponent>();
     addComponent<spriteComponent>();
-}
-
-button::~button() {
-    renderSystem::getInstance()->unregisterEntity(this);
 }

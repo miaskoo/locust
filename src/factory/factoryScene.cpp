@@ -4,15 +4,13 @@
 #include "struct.h"
 #include "scene.h"
 
-#include "srcMatch3/board.h"
+#include "srcMatch3/boardScene.h"
 
 std::shared_ptr<scene> factoryScene::createGameScene() {
-    auto mainScene = std::make_shared<scene>();
-    mainScene->setWeakPointerThis(mainScene);
-    
-    auto b = std::make_shared<board>();
-    b->setWeakPointerThis(b);
-    mainScene->addChild(b);
+    auto mainScene = std::make_shared<boardScene>();
+    mainScene->setWeakPtrThis(mainScene);
+    mainScene->init(10, 10, {50, 50});
+    mainScene->startGame();
     
     return mainScene;
 }

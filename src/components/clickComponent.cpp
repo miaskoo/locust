@@ -1,9 +1,6 @@
 #include "clickComponent.h"
 
-void clickComponent::setClickCallback(std::function<void()>&& aClickCallback) {
-    clickCallback = std::move(aClickCallback);
-    markDirty();
-}
+clickComponent::clickComponent(typeClickComponent aType) : type(aType) {}
 
 void clickComponent::setState(stateButton aState) {
     state = aState;
@@ -19,10 +16,32 @@ bool clickComponent::isClickable() const {
     return clickable;
 }
 
-const std::function<void()>& clickComponent::getClickCallback() const {
-    return clickCallback;
-}
-
 stateButton clickComponent::getState() const {
     return state;
+}
+
+typeClickComponent clickComponent::getTypeClickComponent() const {
+    return type;
+}
+
+buttonComponent::buttonComponent() : clickComponent(typeClickComponent::BUTTON) {}
+
+void buttonComponent::setClickCallback(clickCallback aCallback) {
+    callback = std::move(aCallback);
+    markDirty();
+}
+
+const clickCallback& buttonComponent::getClickCallback() const {
+    return callback;
+}
+
+swapComponent::swapComponent() : clickComponent(typeClickComponent::SWAP) {}
+
+void swapComponent::setSwapCallback(swapCallback aCallback) {
+    callback = std::move(aCallback);
+    markDirty();
+}
+
+const swapCallback& swapComponent::getSwapCallback() const {
+    return callback;
 }

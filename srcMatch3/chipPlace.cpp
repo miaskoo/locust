@@ -1,12 +1,13 @@
 #include "chipPlace.h"
-
-chipPlace::chipPlace(const std::pair<unsigned int, unsigned int>& aId) : id(aId) {}
+#include "chip.h"
+chipPlace::chipPlace(const pairInt& aId) : currentId(aId) {}
 
 void chipPlace::bindChip(chip *aChip) {
     if (bindedChip) {
         return;
     }
     bindedChip = aChip;
+    bindedChip->setBindId(currentId);
 }
 
 void chipPlace::unbindChip() {
@@ -17,7 +18,7 @@ chip* chipPlace::getBindedChip() const {
     return bindedChip;
 }
 
-std::pair<unsigned int, unsigned int> chipPlace::getId() const {
-    return id;
+pairInt chipPlace::getId() const {
+    return currentId;
 }
  

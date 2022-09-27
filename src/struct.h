@@ -3,12 +3,21 @@
 #include <array>
 #include "math.h"
 
-const float RADIANS = 57.2958f;
-const unsigned MAX_COLOR = 254;
+class entity;
+
 enum class stateMouse {IDLE = 0U, CLICK = 1U, CLICK_OUT = 2U};
 enum class dimension {TWO = 2U, THREE = 3U, NONE = 0U};
 enum class typeCash {FREE = 0U, BUSY = 1U, COUNT = 2U};
+enum class swapDirection {LEFT = 0U, RIGTH = 1U, TOP = 2U, BOT = 3U, UNKNOWN = 99U};
+
+const float RADIANS = 57.29578f;
+const unsigned MAX_COLOR = 254;
 static float valueEmpty = 0.0f;
+
+using pairInt = std::pair<int, int>;
+using color4b = std::array<unsigned char, 4U>;
+using clickCallback = std::function<void(std::shared_ptr<entity>)>;
+using swapCallback = std::function<void(std::shared_ptr<entity>, swapDirection)>;
 
 template <size_t countVec>
 struct vec {
@@ -39,12 +48,15 @@ struct vec {
     vec(float aX, float aY) {
         value[0] = aX;
         value[1] = aY;
+        value[2] = valueEmpty;
+        value[3] = valueEmpty;
     }
     
     vec(float aX, float aY, float aZ) {
         value[0] = aX;
         value[1] = aY;
         value[2] = aZ;
+        value[3] = valueEmpty;
     }
     
     vec(float aX, float aY, float aZ, float aW) {
@@ -56,7 +68,7 @@ struct vec {
     
     template<typename T>
     vec(const T& aValue) {
-        for (size_t n = 0U; n < aValue.size(); n++) {
+        for (size_t n = 0U; n < countVec; n++) {
             value[n] = aValue[n];
         }
     }
@@ -84,7 +96,7 @@ struct vec {
         return value[static_cast<size_t>(idx)];
     }
     
-    float getModule() {
+    float getModule() const {
         float result = 0.f;
         for (size_t n = 0U; n < countVec; n++) {
             result += value[n] * value[n];
@@ -101,7 +113,7 @@ struct vec {
     }
     
     static float getAngle(const vec& a, const vec& b) {
-        return acosf(a.getModule() * b.getModule() / getScalarProduct(a, b));
+        return atan2f(b[0]-a[0], b[1]-a[1]) * RADIANS;
     }
     
     static float getVectorProduct(const vec& a, const vec& b) {
@@ -122,26 +134,34 @@ struct vec {
         return c;
     }
     
-    vec operator* (const vec& aValue) {
+    vec operator* (const float& aValue) const {
         vec result;
         for (size_t n = 0U; n < countVec; n++) {
-            result[n] = value[n] * aValue[n];
+            result[n] = value[n] * aValue;
         }
         return result;
     }
     
-    vec operator+ (const vec& aValue) {
+    vec operator/ (const float& aValue) const {
         vec result;
         for (size_t n = 0U; n < countVec; n++) {
-            result[n] = value[n] + aValue[n];
+            result[n] = value[n] / aValue;
         }
         return result;
     }
     
-    vec operator- (const vec& aValue) {
+    vec operator- (const float& aValue) const {
         vec result;
         for (size_t n = 0U; n < countVec; n++) {
-            result[n] = value[n] - aValue[n];
+            result[n] = value[n] - aValue;
+        }
+        return result;
+    }
+    
+    vec operator+ (const float& aValue) const {
+        vec result;
+        for (size_t n = 0U; n < countVec; n++) {
+            result[n] = value[n] + aValue;
         }
         return result;
     }
@@ -152,6 +172,32 @@ struct vec {
         }
         return *this;
     }
+    
+    vec operator*(const vec& aValue) const {
+        vec result;
+        for (size_t n = 0U; n < countVec; n++) {
+            result[n] = value[n] * aValue[n];
+        }
+        return result;
+    }
+    
+
+    vec operator-(const vec& aValue) const {
+        vec result;
+        for (size_t n = 0U; n < countVec; n++) {
+            result[n] = value[n] - aValue[n];
+        }
+        return result;
+    }
+    
+    vec operator+(const vec& aValue) const {
+        vec result;
+        for (size_t n = 0U; n < countVec; n++) {
+            result[n] = value[n] + aValue[n];
+        }
+        return result;
+    }
+
 };
 
 template <size_t countVec>
@@ -364,7 +410,8 @@ struct quaternion {
     }
 };
 
-using color4b = std::array<unsigned char, 4U>;
 
-
-
+namespace functionHelper {
+    bool poinInQuad2d(const vec3f& pos, const vec3f& size, const vec3f& checkPoint);
+    swapDirection getDirectionFromPoint(const vec3f& start, const vec3f& end);
+}
