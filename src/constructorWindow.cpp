@@ -80,6 +80,7 @@ void constructorWindow::updateWindow() {
             }
             else {
                 renderSystem::getInstance()->unregisterEntity(swapLine.get());
+                swapLine->setSize(0, 0);
             }
         }
         
@@ -253,7 +254,7 @@ void constructorWindow::createInfoNode() {
 
 void constructorWindow::destroyInfoNode() {
     if (mainScene) {
-        mainScene->removeChild(uiNode.get());
+        mainScene->markDelete();
     }
     uiNode.reset();
     fpsLabel.reset();

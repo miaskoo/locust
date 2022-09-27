@@ -7,7 +7,7 @@ currentTime(0.0f) {}
 
 
 bool actionDelay::isEnd() const {
-    return currentTime > fullTime;
+    return currentTime >= fullTime;
 }
 
 void actionDelay::update(std::weak_ptr<entity> object, float dt)  {

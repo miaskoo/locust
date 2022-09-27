@@ -11,6 +11,9 @@ public:
     void init(unsigned int w, unsigned int h, vec2f aChipSize, const swapCallback& callback);
     void resetBoard();
     void attachViewToEntity(std::shared_ptr<entity> scene);
+    void deattachView();
+    void hideBoard();
+    void showBoard();
     
     void updateView();
     void updateModel();
@@ -24,6 +27,7 @@ public:
     bool isLock();
     
     bool isHaveAnim();
+    bool isHaveSwapMove();
     
     std::vector<std::vector<std::shared_ptr<entity>>>& getChipButtons();
 private:
@@ -34,5 +38,6 @@ private:
     std::shared_ptr<boardView> view;
     boardModel model;
     
-    bool lock;
+    bool lock = false;
+    bool boardIsHide = false;
 };

@@ -2,7 +2,7 @@
 #include <utility>
 #include "struct.h"
 
-enum class chipColor {RED = 0U, GREEN = 1U, YELLOW = 2U, PINK = 3U, SIZE = 4U, UNKNOWN = 99U};
+enum class chipColor {RED = 0U, GREEN = 1U, YELLOW = 2U, PINK = 3U, BLUE = 4U, NEGATIVE = 5U, SIZE = 6U, UNKNOWN = 99U};
 enum class chipState {SWAP, RETURN, FALL, IDLE, HIDE, SHOW};
 
 class chip {

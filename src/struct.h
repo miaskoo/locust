@@ -8,7 +8,7 @@ class entity;
 enum class stateMouse {IDLE = 0U, CLICK = 1U, CLICK_OUT = 2U};
 enum class dimension {TWO = 2U, THREE = 3U, NONE = 0U};
 enum class typeCash {FREE = 0U, BUSY = 1U, COUNT = 2U};
-enum class swapDirection {LEFT = 0U, RIGTH = 1U, TOP = 2U, BOT = 3U, UNKNOWN = 99U};
+enum class swapDirection {LEFT = 0U, RIGTH = 1U, TOP = 2U, BOT = 3U, SIZE = 4U, UNKNOWN = 99U};
 
 const float RADIANS = 57.29578f;
 const unsigned MAX_COLOR = 254;
@@ -413,5 +413,5 @@ struct quaternion {
 
 namespace functionHelper {
     bool poinInQuad2d(const vec3f& pos, const vec3f& size, const vec3f& checkPoint);
-    swapDirection getDirectionFromPoint(const vec3f& start, const vec3f& end);
+    swapDirection getDirectionFromPoint(const vec3f& start, const vec3f& end, float distance);
 }

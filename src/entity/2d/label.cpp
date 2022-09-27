@@ -32,7 +32,7 @@ vec2f label::calcAutoSize(const std::string& text, void* font) const {
     for (auto& c : text) {
         result[0] += glutBitmapWidth(font, c);
     }
-    result[1] = 18;
+    result[1] = -18;
     return result;
 }
 

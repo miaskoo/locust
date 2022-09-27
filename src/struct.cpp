@@ -4,8 +4,7 @@ bool functionHelper::poinInQuad2d(const vec3f& pos, const vec3f& size, const vec
     return checkPoint[0] > pos[0] && checkPoint[0] < pos[0] + size[0] && checkPoint[1] > pos[1] && checkPoint[1] < pos[1] + size[1];
 }
 
-swapDirection functionHelper::getDirectionFromPoint(const vec3f& start, const vec3f& end) {
-    const float distance = 50.f;
+swapDirection functionHelper::getDirectionFromPoint(const vec3f& start, const vec3f& end, float distance) {
     
     bool seX = poinInQuad2d({start[0] - distance, start[1]}, {distance, distance}, end);
     bool esX = poinInQuad2d({start[0] + distance, start[1]}, {distance, distance}, end);

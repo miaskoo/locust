@@ -1,6 +1,8 @@
 #include "boardController.h"
 #include "clickComponent.h"
 #include <memory>
+#include "renderSystem.h"
+#include "mouseSystem.h"
 
 void boardController::updateView() {
     view->update(model.getChipPool());
@@ -34,9 +36,35 @@ void boardController::attachViewToEntity(std::shared_ptr<entity> scene) {
     if (!scene) {
         return;
     }
-    view->removeFromParent();
+    view->unMarkDelete();
     std::shared_ptr<entity> child = view;
     scene->addChild(child);
+}
+
+void boardController::deattachView() {
+    view->markDelete();
+}
+
+void boardController::showBoard() {
+    if (!boardIsHide) {
+        return;
+    }
+    for (auto& child : view->getChilds()) {
+        renderSystem::getInstance()->registerEntity(child.get());
+        mouseSystem::getInstance()->registerEntity(child.get());
+    }
+    boardIsHide = false;
+}
+
+void boardController::hideBoard() {
+    if (boardIsHide) {
+        return;
+    }
+    for (auto& child : view->getChilds()) {
+        renderSystem::getInstance()->unregisterEntity(child.get());
+        mouseSystem::getInstance()->unregisterEntity(child.get());
+    }
+    boardIsHide = true;
 }
 
 void boardController::swapChip(chip *caller, chip *receiver) {
@@ -89,4 +117,8 @@ void boardController::initViewAllChips() {
             view->initViewChip(&chips[aW][aH]);
         }
     }
+}
+
+bool boardController::isHaveSwapMove() {
+    return model.isHaveSwapMove();
 }

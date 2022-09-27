@@ -9,7 +9,7 @@
 std::shared_ptr<scene> factoryScene::createGameScene() {
     auto mainScene = std::make_shared<boardScene>();
     mainScene->setWeakPtrThis(mainScene);
-    mainScene->init(10, 10, {50, 50});
+    mainScene->init(5, 4, {100, 100});
     mainScene->startGame();
     
     return mainScene;

@@ -35,6 +35,6 @@ private:
     unsigned int countAction = 0U;
     
     const unsigned int timeMoveAction = 250;
-    const unsigned int timeFadeInAction = 250;
-    const unsigned int timeFadeOutAction = 250;
+    const unsigned int timeFadeInAction = 200;
+    const unsigned int timeFadeOutAction = 200;
 };

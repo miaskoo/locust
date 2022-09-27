@@ -5,16 +5,17 @@ project(locust LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 # includes
-include_directories("./" "include" "src" "src/actions" "src/components" "src/entity" "src/entity/2d" "src/entity/3d" "src/factory" "src/systems" "src/controllers")
+include_directories("./" "include" "src" "src/actions" "src/components" "src/entity" "src/entity/2d" "src/entity/3d" "src/factory" "src/systems" "src/controllers" "srcMatch3")
 
 # test
-file(GLOB_RECURSE MAIN "src/main.cpp" "src/struct.h" "src/constructorWindow.h" "src/constructorWindow.cpp" "src/glFunctional.h" "src/glFunctional.cpp")
+file(GLOB_RECURSE MAIN "src/main.cpp" "src/struct.h" "src/struct.cpp" "src/constructorWindow.h" "src/constructorWindow.cpp" "src/glFunctional.h" "src/glFunctional.cpp")
 file(GLOB_RECURSE ACTION src/actions/*.h src/actions/*.cpp)
 file(GLOB_RECURSE COMPONENTS src/components/*.h src/components/*.cpp)
 file(GLOB_RECURSE ENTITY src/entity/*.h src/entity/*.cpp)
 file(GLOB_RECURSE FACTORY src/factory/*.h src/factory/*.cpp)
 file(GLOB_RECURSE SYSTEM src/systems/*.h src/systems/*.cpp)
 file(GLOB_RECURSE CONTROLLER src/controllers/*.h src/controllers/*.cpp)
+file(GLOB_RECURSE MATCH3 srcMatch3/*.h srcMatch3/*.cpp)
 
 #add filters
 source_group("test" FILES ${MAIN})
@@ -24,6 +25,7 @@ source_group("test/entity" FILES ${ENTITY})
 source_group("test/factory" FILES ${FACTORY})
 source_group("test/systems" FILES ${SYSTEM})
 source_group("test/controllers" FILES ${CONTROLLER})
+source_group("test/match3" FILES ${MATCH3})
 
 source_group("SOIL" FILES ${HEADERS_SOIL})
 
@@ -33,12 +35,12 @@ if (${PLATFORM} STREQUAL MACOS)
     find_library(COCOA_LIBRARY Cocoa)
     find_library(GLUT_LIBRARY GLUT)
     find_library(OPENGL_LIBARY OpenGL)
-    add_executable(${PROJECT_NAME} ${ACTION} ${MAIN} ${COMPONENTS} ${ENTITY} ${FACTORY} ${SYSTEM} ${CONTROLLER} ${HEADERS_SOIL})
+    add_executable(${PROJECT_NAME} ${ACTION} ${MAIN} ${COMPONENTS} ${ENTITY} ${FACTORY} ${SYSTEM} ${CONTROLLER} ${HEADERS_SOIL} ${MATCH3})
     target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBARY} ${COCOA_LIBRARY} ${GLUT_LIBRARY} libsoil.a)
     add_definitions(-DGL_SILENCE_DEPRECATION -DMACOS)
 endif()
 if (${PLATFORM} STREQUAL WINDOWS)
-    add_executable(${PROJECT_NAME} ${ACTION} ${MAIN} ${COMPONENTS} ${ENTITY} ${FACTORY} ${SYSTEM} ${CONTROLLER} ${HEADERS_SOIL})
+    add_executable(${PROJECT_NAME} ${ACTION} ${MAIN} ${COMPONENTS} ${ENTITY} ${FACTORY} ${SYSTEM} ${CONTROLLER} ${HEADERS_SOIL} ${MATCH3})
     target_link_libraries(${PROJECT_NAME} include/glew/glew32 include/freeglut/freeglut include/SOIL/x64/soil)
     add_definitions(-DGL_SILENCE_DEPRECATION)
     add_compile_definitions($<$<CONFIG:DEBUG>:DEBUG> $<$<CONFIG:RELEASE>:NDEBUG>)

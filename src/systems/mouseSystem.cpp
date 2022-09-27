@@ -35,7 +35,7 @@ void mouseSystem::update(int xPos, int yPos) {
             auto transform = supervisedEntity->getComponent<transformComponent>();
             auto callback = static_cast<swapComponent*>(component)->getSwapCallback();
             if (callback) {
-                auto dir = functionHelper::getDirectionFromPoint(transform->getCashPos(), posMouse);
+                auto dir = functionHelper::getDirectionFromPoint(transform->getCashPos(), posMouse, transform->getCashSize()[0]);
                 if (dir != swapDirection::UNKNOWN) {
                     callback(supervisedEntity, dir);
                 }
@@ -89,6 +89,9 @@ void mouseSystem::unregisterEntity(entity* object) {
     auto iter = std::remove_if(objects.begin(), objects.end(), [object](const auto& element){
         return object == element;
     });
+    if (iter == objects.end()) {
+        return;
+    }
     objects.erase(iter);
 }
 

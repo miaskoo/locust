@@ -6,7 +6,7 @@ void boardModel::init(unsigned int w, unsigned int h) {
     chipPlacePool.clear();
     
     chipPool.resize(w);
-    for (auto aW = 0U; aW < h; aW++) {
+    for (auto aW = 0U; aW < w; aW++) {
         chipPool[aW].reserve(h);
         for (auto aH = 0U; aH < h; aH++) {
             chipPool[aW].emplace_back(chip(std::make_pair(aW, aH)));
@@ -14,7 +14,7 @@ void boardModel::init(unsigned int w, unsigned int h) {
     }
     
     chipPlacePool.resize(w);
-    for (int aW = 0U; aW < h; aW++) {
+    for (int aW = 0U; aW < w; aW++) {
         chipPlacePool[aW].reserve(h);
         for (auto aH = 0U; aH < h; aH++) {
             chipPlacePool[aW].emplace_back(chipPlace(std::make_pair(aW, aH)));
@@ -36,23 +36,25 @@ void boardModel::setDefaultBind() {
 }
 
 void boardModel::generateBoardColor() {
-    auto maxColor = static_cast<size_t>(chipColor::SIZE);
-    for (auto aW = 0U; aW < chipPool.size(); aW++) {
-        for (auto aH = 0U; aH < chipPool[aW].size(); aH++) {
-            auto& chipObj = chipPool[aW][aH];
-            auto color = static_cast<chipColor>(rand()%maxColor);
-            chipObj.setColor(color);
-            if (!getMatch3Chips(&chipObj).empty()) {
-                for (auto n = 0U; n < maxColor; n++) {
-                    color = static_cast<chipColor>(n);
-                    chipObj.setColor(color);
-                    if (getMatch3Chips(&chipObj).empty()) {
-                        break;
+    do {
+        for (auto aW = 0U; aW < chipPool.size(); aW++) {
+            for (auto aH = 0U; aH < chipPool[aW].size(); aH++) {
+                auto& chipObj = chipPool[aW][aH];
+                auto color = static_cast<chipColor>(rand() % maxColor);
+                chipObj.setColor(color);
+                if (!getMatch3Chips(&chipObj).empty()) {
+                    for (auto n = 0U; n < maxColor; n++) {
+                        color = static_cast<chipColor>(n);
+                        chipObj.setColor(color);
+                        if (getMatch3Chips(&chipObj).empty()) {
+                            break;
+                        }
                     }
                 }
             }
         }
     }
+    while (!isHaveSwapMove());
 }
 
 const std::vector<std::vector<chip>>& boardModel::getChipPool() const {
@@ -89,7 +91,7 @@ chipPlace* boardModel::getChipPlaceById(const pairInt& chipPlaceId) {
 
 
 chipPlace* boardModel::getPlaceForFall(chip* object) {
-    auto chipPlace = getChipPlaceFromDirection(object, swapDirection::BOT);
+    auto chipPlace = getChipPlaceFromDirection(object, gravityDirection);
     if (!chipPlace) {
         return nullptr;
     }
@@ -249,7 +251,6 @@ void boardModel::updateDirtyChips() {
                 break;
             }
             case chipState::SHOW: {
-                dirtyChip->setState(chipState::IDLE);
                 addToFallRow(dirtyChip);
                 break;
             }
@@ -303,7 +304,7 @@ void boardModel::updateFallRows() {
                 bindedChip->setState(chipState::FALL);
                 fallChip(&placeChip, placeForFall);
             }
-            else if (bindedChip->getState() == chipState::FALL) {
+            else if (bindedChip->getState() == chipState::FALL || bindedChip->getState() == chipState::SHOW) {
                 if(!initMatch3ForDirtyChip(bindedChip)) {
                     bindedChip->setState(chipState::IDLE);
                 }
@@ -318,7 +319,7 @@ void boardModel::createNewChips() {
     for (auto n = 0U; n < chipPool.size(); n++) {
         if (auto emptyPlace = getPlaceForCreate(n)) {
             if (auto freeChip = getFreeChip()) {
-                freeChip->setColor(static_cast<chipColor>(rand() % static_cast<unsigned int>(chipColor::SIZE)));
+                freeChip->setColor(static_cast<chipColor>(rand() % maxColor));
                 addChipToDirty(freeChip);
                 createNewChip(freeChip, emptyPlace);
                 freeChip->setState(chipState::SHOW);
@@ -399,4 +400,32 @@ std::list<chip*> boardModel::getMatch3ChipsByDirection(chip *caller, swapDirecti
     }
     
     return result;
+}
+
+bool boardModel::isHaveSwapMove() {
+    for (auto& aW : chipPool) {
+        for (auto& aH : aW) {
+            auto saveColor = aH.getColor();
+            for (auto direction = 0U; direction < static_cast<size_t>(swapDirection::SIZE); direction++) {
+                auto place = getChipPlaceFromDirection(&aH, static_cast<swapDirection>(direction));
+                if (!place) {
+                    continue;
+                }
+                auto bindedChip = place->getBindedChip();
+                if (!bindedChip) {
+                    continue;
+                }
+                aH.setColor(bindedChip->getColor());
+                bindedChip->setColor(saveColor);
+                if (!getMatch3Chips(&aH).empty()) {
+                    bindedChip->setColor(aH.getColor());
+                    aH.setColor(saveColor);
+                    return true;
+                }
+                bindedChip->setColor(aH.getColor());
+            }
+            aH.setColor(saveColor);
+        }
+    }
+    return false;
 }

@@ -25,9 +25,6 @@ public:
     void reserveChild(size_t count);
     void addChild(std::shared_ptr<entity>& child);
     
-    void removeChild(entity* child);
-    void removeFromParent();
-    
     void addAction(actionBase* action);
     size_t getCountAction();
     void clearAllActions();
@@ -61,6 +58,10 @@ public:
     void setWeakPtrThis(std::weak_ptr<entity> aWThis);
     
     virtual void update(float dt);
+    
+    void markDelete();
+    void unMarkDelete();
+    bool isNeedDelete();
 protected:
     entity() = delete;
     entity(dimension aType);
@@ -72,13 +73,17 @@ protected:
     std::array<std::shared_ptr<entityCash>, static_cast<size_t>(typeCash::COUNT)> cashArray;
     std::weak_ptr<entity> wThis;
 private:
+    void removeChild(entity* child);
+    void removeFromParent();
+    
     const dimension type;
     
     std::weak_ptr<entity> parent;
     std::vector<std::shared_ptr<entity>> childs;
 
-    std::vector<std::unique_ptr<actionBase>> actions;
+    std::vector<std::shared_ptr<actionBase>> actions;
     
     bool dirty = false;
     bool ignoreSorting = false;
+    bool needDelete = false;
 };

@@ -80,7 +80,7 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
                     initViewChip(&awh);
                     object->getComponent<colorComponent>()->setColor(255,255,255,0);
                     color4b colorFadeIn = {255,255,255,255};
-                    object->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, awh](){
+                    object->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, object](){
                         countAction--;
                     }));
                     continue;
@@ -165,6 +165,14 @@ std::string boardView::getTextureFromColor(chipColor color) {
         }
         case chipColor::YELLOW: {
             result = "yellowChip.png";
+            break;
+        }
+        case chipColor::BLUE: {
+            result = "blueChip.png";
+            break;
+        }
+        case chipColor::NEGATIVE: {
+            result = "negativeChip.png";
             break;
         }
         default: {

@@ -26,6 +26,8 @@ public:
     void swapChipMove(chip* caller, chip* receiver);
     
     void update();
+    
+    bool isHaveSwapMove();
 private:
     pairInt getChipPlaceIdByDirection(chip* object, swapDirection direction);
     
@@ -66,4 +68,5 @@ private:
     
     const unsigned int needChipForMatch3 = 2U;
     const swapDirection gravityDirection = swapDirection::BOT;
+    const unsigned int maxColor = static_cast<unsigned int>(chipColor::SIZE);
 };

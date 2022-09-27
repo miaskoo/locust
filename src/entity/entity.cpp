@@ -83,21 +83,31 @@ void entity::setWeakPtrThis(std::weak_ptr<entity> aWThis) {
 }
 
 void entity::update(float dt) {
-    for (auto& action : actions) {
+    std::vector<std::shared_ptr<actionBase>> localCopyAction;
+    std::copy(actions.begin(), actions.end(), std::back_inserter(localCopyAction));
+    for (auto& action : localCopyAction) {
         action->update(wThis, dt);
     }
     for (auto& child : childs) {
         child->update(dt);
     }
-    auto forRemove = std::remove_if(actions.begin(), actions.end(), [this](auto& element){
-        if (element->isEnd()) {
-            element->end(wThis);
-            return true;
+    for (auto& action : localCopyAction) {
+        if (action->isEnd()) {
+            action->end(wThis);
         }
-        return false;
+    }
+    
+    auto forRemove = std::remove_if(actions.begin(), actions.end(), [this](auto& element){
+        return element->isEnd();
     });
     if (forRemove != actions.end()) {
         actions.erase(forRemove);
+    }
+    auto forRemoveChild = std::remove_if(childs.begin(), childs.end(), [this](auto& element){
+        return element->isNeedDelete();
+    });
+    if (forRemoveChild != childs.end()) {
+        childs.erase(forRemoveChild);
     }
 }
 
@@ -200,4 +210,16 @@ size_t entity::getCountAction() {
 
 std::weak_ptr<entity> entity::getWeakPtr() {
     return wThis;
+}
+
+void entity::markDelete() {
+    needDelete = true;
+}
+
+bool entity::isNeedDelete() {
+    return needDelete;
+}
+
+void entity::unMarkDelete() {
+    needDelete = false;
 }

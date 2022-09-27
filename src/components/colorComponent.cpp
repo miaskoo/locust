@@ -16,6 +16,11 @@ void colorComponent::setColor(unsigned char r, unsigned char g, unsigned char b,
     markDirty();
 }
 
+void colorComponent::setColor(color4b aColor) {
+    color = aColor;
+    markDirty();
+}
+
 void colorComponent::setAlphaMode(bool value) {
     alphaMode = value;
     markDirty();
