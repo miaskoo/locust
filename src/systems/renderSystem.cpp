@@ -239,7 +239,7 @@ void renderSystem::sortEntityForRender() {
         const auto aD = static_cast<size_t>(a->getDimension());
         const auto bD = static_cast<size_t>(b->getDimension());
         if (aD != bD) {
-            return static_cast<size_t>(a->getDimension()) > static_cast<size_t>(b->getDimension());
+            return aD > bD;
         }
         return a->getZOrder() < b->getZOrder();
     });

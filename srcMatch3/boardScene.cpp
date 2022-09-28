@@ -62,7 +62,7 @@ void boardScene::init(unsigned int w, unsigned int h, vec2f chipSize) {
     isInit = true;
     
     boardController.init(w, h, chipSize, std::bind(&boardScene::swapCallback, this, std::placeholders::_1, std::placeholders::_2));
-    auto chipButtons = boardController.getChipButtons();
+    const auto& chipButtons = boardController.getChipButtons();
     for (int aW = 0; aW < w; aW++) {
         for (int aH = 0; aH < h; aH++) {
             callerToId[chipButtons[aW][aH]] = {aW, aH};

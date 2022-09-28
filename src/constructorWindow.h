@@ -1,4 +1,5 @@
 #pragma once
+
 #include "factoryScene.h"
 #include "struct.h"
 #include <atomic>

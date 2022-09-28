@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdio.h>
 #include "struct.h"
 #include "entity.h"
