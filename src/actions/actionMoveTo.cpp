@@ -1,6 +1,8 @@
 #include "actionMoveTo.h"
 #include "transformComponent.h"
 
+using namespace action;
+
 actionMoveTo::actionMoveTo(vec3f aTargetPos, unsigned int aTime, std::function<void()> aCallback) : actionDelay(aTime, aCallback), targetPos(aTargetPos) {}
 
 void actionMoveTo::update(std::weak_ptr<entity> object, float dt) {

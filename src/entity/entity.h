@@ -26,7 +26,7 @@ public:
     void reserveChild(size_t count);
     void addChild(std::shared_ptr<entity>& child);
     
-    void addAction(actionBase* action);
+    void addAction(action::actionBase* action);
     size_t getCountAction();
     void clearAllActions();
     
@@ -91,7 +91,7 @@ private:
     std::weak_ptr<entity> parent;
     std::vector<std::shared_ptr<entity>> childs;
 
-    std::vector<std::shared_ptr<actionBase>> actions;
+    std::vector<std::shared_ptr<action::actionBase>> actions;
     
     bool dirty = false;
     bool ignoreSorting = false;

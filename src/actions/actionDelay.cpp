@@ -1,5 +1,7 @@
 #include "actionDelay.h"
 
+using namespace action;
+
 actionDelay::actionDelay(unsigned int aTime, std::function<void()> aCallback) :
 actionBase(aCallback),
 fullTime(aTime),

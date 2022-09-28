@@ -1,12 +1,14 @@
-#include "actionRotate.h"
+#include "actionRotateBy.h"
 #include "transformComponent.h"
 
-actionRotate::actionRotate(vec3f aAxis, float aAngle, unsigned int aTime, std::function<void()> aCallback) :
+using namespace action;
+
+actionRotateBy::actionRotateBy(vec3f aAxis, float aAngle, unsigned int aTime, std::function<void()> aCallback) :
 actionDelay(aTime, aCallback),
 destination(aAngle),
 axis(aAxis){}
 
-void actionRotate::update(std::weak_ptr<entity> object, float dt)  {
+void actionRotateBy::update(std::weak_ptr<entity> object, float dt)  {
     auto pObject = object.lock();
     
     if (!pObject) {
@@ -26,7 +28,7 @@ void actionRotate::update(std::weak_ptr<entity> object, float dt)  {
     pObject->getTransformComponent()->setRotate(startRotate * quaternion::getFromEuler(axis, destination * getTimeProgress()));
 }
 
-void actionRotate::end(std::weak_ptr<entity> object) {
+void actionRotateBy::end(std::weak_ptr<entity> object) {
     auto pObject = object.lock();
     
     if (!pObject) {
@@ -38,7 +40,7 @@ void actionRotate::end(std::weak_ptr<entity> object) {
     actionDelay::end(object);
 }
 
-void actionRotate::reset() {
+void actionRotateBy::reset() {
     actionDelay::reset();
     startRotate = startRotate * quaternion::getFromEuler(axis, destination);
 }

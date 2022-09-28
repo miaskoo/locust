@@ -3,18 +3,20 @@
 #include <functional>
 #include "struct.h"
 
-class actionBase;
+namespace action {
+    class actionBase;
+}
 
 class factoryAction {
 public:
-    static actionBase* createRotateAction(vec3f axis, float angle, unsigned int time, std::function<void()> callback = nullptr);
-    static actionBase* createDelayAction(unsigned int time, std::function<void()> callback = nullptr);
-    static actionBase* createRepeatAction(actionBase* action, int count, std::function<void()> callback = nullptr);
-    static actionBase* createRepeatInfinityAction(actionBase* action, std::function<void()> callback = nullptr);
-    static actionBase* createChangeColorAction(color4b targetColor, unsigned int time, std::function<void()> callback = nullptr);
-    static actionBase* createActionSequence(std::vector<actionBase*> actions, std::function<void()> callback = nullptr);
-    static actionBase* createRotateLerpAction(quaternion targetRotate, unsigned int time, std::function<void()> callback = nullptr);
-    static actionBase* createMoveToAction(vec3f targetPos, unsigned int time, std::function<void()> callback = nullptr);
+    static action::actionBase* rotate(vec3f axis, float angle, unsigned int time, std::function<void()> callback = nullptr);
+    static action::actionBase* delay(unsigned int time, std::function<void()> callback = nullptr);
+    static action::actionBase* repeat(action::actionBase* action, int count, std::function<void()> callback = nullptr);
+    static action::actionBase* repeatInfinity(action::actionBase* action, std::function<void()> callback = nullptr);
+    static action::actionBase* changeColor(color4b targetColor, unsigned int time, std::function<void()> callback = nullptr);
+    static action::actionBase* sequence(std::vector<action::actionBase*> actions, std::function<void()> callback = nullptr);
+    static action::actionBase* rotateTo(quaternion targetRotate, unsigned int time, std::function<void()> callback = nullptr);
+    static action::actionBase* moveTo(vec3f targetPos, unsigned int time, std::function<void()> callback = nullptr);
 private:
     factoryAction() = default;
     ~factoryAction() = default;

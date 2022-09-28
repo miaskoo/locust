@@ -2,10 +2,11 @@
 #include "colorComponent.h"
 #include "entity.h"
 
+using namespace action;
+
 actionChangeColor::actionChangeColor(color4b aColor, unsigned int aTime, std::function<void()> aCallback) :
 actionDelay(aTime, aCallback),
 newColor(aColor) {}
-
 
 void actionChangeColor::update(std::weak_ptr<entity> object, float dt)  {
     auto pObject = object.lock();

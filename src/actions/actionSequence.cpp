@@ -1,5 +1,7 @@
 #include "actionSequence.h"
 
+using namespace action;
+
 actionSequence::actionSequence(std::function<void()> aCallback) :
 actionBase(aCallback) {}
 

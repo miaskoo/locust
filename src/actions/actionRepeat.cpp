@@ -1,6 +1,8 @@
 #include "actionRepeat.h"
 #include "entity.h"
 
+using namespace action;
+
 actionRepeat::actionRepeat(actionBase* actionForRepeat, std::function<void()> callback) :
 actionBase(callback),
 fullTimes(0),

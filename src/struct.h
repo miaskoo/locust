@@ -49,29 +49,36 @@ struct vec {
     }
     
     vec(float aX, float aY) {
-        value[0] = aX;
-        value[1] = aY;
+        (*this)[0] = aX;
+        (*this)[1] = aY;
     }
     
     vec(float aX, float aY, float aZ) {
-        value[0] = aX;
-        value[1] = aY;
-        value[2] = aZ;
+        (*this)[0] = aX;
+        (*this)[1] = aY;
+        (*this)[2] = aZ;
     }
     
     vec(float aX, float aY, float aZ, float aW) {
-        value[0] = aX;
-        value[1] = aY;
-        value[2] = aZ;
-        value[3] = aW;
+        (*this)[0] = aX;
+        (*this)[1] = aY;
+        (*this)[2] = aZ;
+        (*this)[3] = aW;
     }
     
-    template<typename T>
-    vec(const T& aValue) {
+    vec(const std::array<float, countVec>& aValue) {
         for (size_t n = 0U; n < countVec; n++) {
             value[n] = aValue[n];
         }
     }
+    
+    template<typename T>
+    vec(const T& aValue) {
+        for (size_t n = 0U; n < aValue.size() && n < countVec; n++) {
+            value[n] = aValue[n];
+        }
+    }
+    
     
     size_t size() const{
         return countVec;

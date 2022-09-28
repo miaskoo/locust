@@ -6,6 +6,8 @@
 #include "mouseSystem.h"
 #include <iterator>
 
+using namespace action;
+
 entity::entity(dimension aType) : type(aType) {}
 
 entity::~entity() {

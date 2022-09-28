@@ -73,10 +73,10 @@ bufferIdx factoryBuffer::createTorusBuffer(int countSector) {
         float y2 = xy * sinf(sectorAngle2);
         n--;
 
-        vec3f p1({x1,y1,z1});
-        vec3f p2({x1,y1,z2});
-        vec3f p3({x2,y2,z1});
-        vec3f p4({x2,y2,z2});
+        vec3f p1(x1,y1,z1);
+        vec3f p2(x1,y1,z2);
+        vec3f p3(x2,y2,z1);
+        vec3f p4(x2,y2,z2);
         
         auto tIdx = (texIdx)%8;
         auto tIdx2 = (texIdx+1)%8;
@@ -86,10 +86,10 @@ bufferIdx factoryBuffer::createTorusBuffer(int countSector) {
         auto x2t = posTex[tIdx2][0];
         auto y2t = posTex[tIdx2][1];
         
-        vec2f p1tex({x1t,y1t});
-        vec2f p2tex({x1t,y2t});
-        vec2f p3tex({x2t,y1t});
-        vec2f p4tex({x2t,y2t});
+        vec2f p1tex(x1t,y1t);
+        vec2f p2tex(x1t,y2t);
+        vec2f p3tex(x2t,y1t);
+        vec2f p4tex(x2t,y2t);
         
         // p1--p2
         // |    |

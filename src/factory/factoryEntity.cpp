@@ -52,8 +52,8 @@ std::shared_ptr<entity> factoryEntity::createQuadrilateral() {
     result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f, 1.f});
-    component->setAnchor(vec3f({0.5f,0.5f,0.0f}));
-    component->setPivot(vec3f({0.5f,0.5f,0.0f}));
+    component->setAnchor({0.5f,0.5f,0.0f});
+    component->setPivot({0.5f,0.5f,0.0f});
     result->createCash();
     return result;
 }
@@ -63,8 +63,8 @@ std::shared_ptr<entity> factoryEntity::createTorus(size_t countSector) {
     result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f, 1.f});
-    component->setAnchor(vec3f({0.5f,0.5f,0.0f}));
-    component->setPivot(vec3f({0.5f,0.5f,0.0f}));
+    component->setAnchor({0.5f,0.5f,0.0f});
+    component->setPivot({0.5f,0.5f,0.0f});
     result->createCash();
     
     auto buff = constructorWindow::getInstance()->getBufferController()->getTorusBufferIdx(countSector);

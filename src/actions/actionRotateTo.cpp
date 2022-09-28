@@ -1,12 +1,14 @@
-#include "actionLerpRotate.h"
+#include "actionRotateTo.h"
 #include "entity.h"
 #include "transformComponent.h"
 
-actionLerpRotate::actionLerpRotate(quaternion aTargetRotate, unsigned int aTime, std::function<void()> aCallback) :
+using namespace action;
+
+actionRotateTo::actionRotateTo(quaternion aTargetRotate, unsigned int aTime, std::function<void()> aCallback) :
 actionDelay(aTime, aCallback),
 targetRotate(aTargetRotate) {}
 
-void actionLerpRotate::update(std::weak_ptr<entity> object, float dt) {
+void actionRotateTo::update(std::weak_ptr<entity> object, float dt) {
     auto pObject = object.lock();
     
     if (!pObject) {
@@ -27,7 +29,7 @@ void actionLerpRotate::update(std::weak_ptr<entity> object, float dt) {
     pObject->getTransformComponent()->setRotate(currentRotate);
 }
 
-void actionLerpRotate::end(std::weak_ptr<entity> object) {
+void actionRotateTo::end(std::weak_ptr<entity> object) {
     auto pObject = object.lock();
     
     if (!pObject) {
@@ -39,7 +41,7 @@ void actionLerpRotate::end(std::weak_ptr<entity> object) {
     actionDelay::end(object);
 }
 
-void actionLerpRotate::reset() {
+void actionRotateTo::reset() {
     init = false;
     actionDelay::reset();
 }

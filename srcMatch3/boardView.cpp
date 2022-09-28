@@ -82,8 +82,7 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
                 }
             }
             
-            auto bindId = awh.getBindId();
-            moveChip(sprite, bindId);
+            moveChip(sprite, awh.getBindId());
         }
     }
 }
@@ -91,7 +90,7 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
 void boardView::moveChip(std::shared_ptr<entity> sprite, const pairInt& bindId) {
     auto targetPos = getPosFromId(bindId);
     countAction++;
-    sprite->addAction(factoryAction::createMoveToAction(targetPos, timeMoveAction, [this](){
+    sprite->addAction(factoryAction::moveTo(targetPos, timeMoveAction, [this](){
         countAction--;
     }));
 }
@@ -119,7 +118,7 @@ void boardView::showChip(std::shared_ptr<entity> sprite) {
     sprite->getComponent<colorComponent>()->setVisable(true);
     sprite->getComponent<colorComponent>()->setColor(colorFadeOut);
     countAction++;
-    sprite->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, sprite](){
+    sprite->addAction(factoryAction::changeColor(colorFadeIn, timeFadeInAction, [this, sprite](){
         countAction--;
     }));
 }
@@ -127,7 +126,7 @@ void boardView::showChip(std::shared_ptr<entity> sprite) {
 void boardView::hideChip(std::shared_ptr<entity> sprite) {
     sprite->getComponent<colorComponent>()->setColor(colorFadeIn);
     countAction++;
-    sprite->addAction(factoryAction::createChangeColorAction(colorFadeOut, timeFadeOutAction, [this, sprite](){
+    sprite->addAction(factoryAction::changeColor(colorFadeOut, timeFadeOutAction, [this, sprite](){
         countAction--;
         sprite->getComponent<colorComponent>()->setVisable(false);
     }));
