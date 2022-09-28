@@ -65,6 +65,9 @@ public:
     void markDelete();
     void unMarkDelete();
     bool isNeedDelete();
+    
+    void setZOrder(unsigned int aZOrder);
+    unsigned int getZOrder();
 protected:
     entity() = delete;
     entity(dimension aType);
@@ -92,4 +95,5 @@ private:
     bool dirty = false;
     bool ignoreSorting = false;
     bool needDelete = false;
+    unsigned int zOrder = 0U;
 };

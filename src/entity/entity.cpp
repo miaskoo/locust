@@ -248,3 +248,11 @@ void entity::unregisterSystemsChilds(entity *object) {
         unregisterSystems(child.get());
     }
 }
+
+void entity::setZOrder(unsigned int aZOrder) {
+    zOrder = aZOrder;
+}
+
+unsigned int entity::getZOrder() {
+    return zOrder;
+}
