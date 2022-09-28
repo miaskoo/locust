@@ -41,6 +41,7 @@ void scene::updateChilds(entity *object) {
     for (auto& child : object->getChilds()) {
         if (child->isDirty()) {
             child->registerSystems();
+            child->unDirty();
         }
         updateChilds(child.get());
     }
