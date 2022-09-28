@@ -35,6 +35,7 @@ public:
     
     bool isDirty() const;
     void markDirty();
+    void markDirtyChilds();
     void unDirty();
     
     void setIgnoreSorting(bool value);

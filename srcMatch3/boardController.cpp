@@ -39,6 +39,8 @@ void boardController::attachViewToEntity(std::shared_ptr<entity> scene) {
     view->unMarkDelete();
     std::shared_ptr<entity> child = view;
     scene->addChild(child);
+    scene->markDirty();
+    scene->markDirtyChilds();
 }
 
 void boardController::deattachView() {

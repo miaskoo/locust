@@ -274,3 +274,10 @@ void entity::setSystemRegister(bool value) {
 bool entity::isSystemRegister() {
     return systemRegister;
 }
+
+void entity::markDirtyChilds() {
+    for (auto& child : childs) {
+        child->markDirty();
+        child->markDirtyChilds();
+    }
+}
