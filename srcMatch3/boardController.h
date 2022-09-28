@@ -12,9 +12,7 @@ public:
     void resetBoard();
     void attachViewToEntity(std::shared_ptr<entity> scene);
     void deattachView();
-    void hideBoard();
-    void showBoard();
-    
+
     void updateView();
     void updateModel();
     
@@ -39,5 +37,4 @@ private:
     boardModel model;
     
     bool lock = false;
-    bool boardIsHide = false;
 };

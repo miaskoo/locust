@@ -65,12 +65,7 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
             
             switch(awh.getState()) {
                 case chipState::HIDE: {
-                    countAction++;
-                    color4b colorFadeOut = {255,255,255,0};
-                    object->addAction(factoryAction::createChangeColorAction(colorFadeOut, timeFadeOutAction, [this, awh](){
-                        hideChip(awh.getId());
-                        countAction--;
-                    }));
+                    hideChip(awh.getId());
                     continue;
                     break;
                 }
@@ -78,11 +73,6 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
                     countAction++;
                     showChip(awh.getId()); 
                     initViewChip(&awh);
-                    object->getComponent<colorComponent>()->setColor(255,255,255,0);
-                    color4b colorFadeIn = {255,255,255,255};
-                    object->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, object](){
-                        countAction--;
-                    }));
                     continue;
                     break;
                 }
@@ -129,7 +119,11 @@ void boardView::showChip(const pairInt &id) {
         return;
     }
     
-    renderSystem::getInstance()->registerEntity(object.get());
+    object->getComponent<colorComponent>()->setVisable(true);
+    object->getComponent<colorComponent>()->setColor(colorFadeOut);
+    object->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, object](){
+        countAction--;
+    }));
 }
 
 void boardView::hideChip(const pairInt &id) {
@@ -138,7 +132,12 @@ void boardView::hideChip(const pairInt &id) {
         return;
     }
     
-    renderSystem::getInstance()->unregisterEntity(object.get());
+    countAction++;
+    object->getComponent<colorComponent>()->setColor(colorFadeIn);
+    object->addAction(factoryAction::createChangeColorAction(colorFadeOut, timeFadeOutAction, [this, object](){
+        countAction--;
+        object->getComponent<colorComponent>()->setVisable(false);
+    }));
 }
 
 

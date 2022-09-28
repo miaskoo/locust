@@ -9,7 +9,6 @@ object3d::object3d() : entity(dimension::THREE) {
     addComponent<transformComponentMain<vec3f>>();
     addComponent<textureComponent>();
     addComponent<bufferComponent>();
-    renderSystem::getInstance()->registerEntity(this);
 }
 
 void object3d::createCash() {

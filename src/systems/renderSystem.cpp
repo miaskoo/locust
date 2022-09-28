@@ -54,6 +54,9 @@ void renderSystem::updateWindowSize() {
 }
 
 void renderSystem::update(size_t cashIdx) {
+    if (!locker.try_lock()) {
+        return;
+    }
     if (dirty) {
         sortEntityForRender();
         dirty = false;
@@ -63,6 +66,7 @@ void renderSystem::update(size_t cashIdx) {
         windowSizeDirty = false;
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     
     for (auto object : objects) {
         if (object->getDimension() == dimension::TWO) {
@@ -75,12 +79,16 @@ void renderSystem::update(size_t cashIdx) {
     }
     
     glutSwapBuffers();
+    
+    locker.unlock();
 }
 
 void renderSystem::renderEntity(entity* object, size_t cashIdx) {
     auto cash = object->getCash(cashIdx);
     
-    bindColor(cash->getComponent<colorComponent>());
+    if (!bindColor(cash->getComponent<colorComponent>())) {
+        return;
+    }
     bindTexture(cash->getComponent<textureComponent>());
     bindMatrix(cash->getComponent<transformComponent>());
     
@@ -109,18 +117,25 @@ void renderSystem::renderEntity(entity* object, size_t cashIdx) {
     unbindColor();
 }
 
-void renderSystem::bindColor(colorComponent *component) {
+bool renderSystem::bindColor(colorComponent *component) {
     if (!component) {
-        return;
+        return true;
+    }
+    if (!component->isVisable()) {
+        return false;
     }
     auto color = component->getColor();
     if (component->isAlphaMode()) {
+        if (color[3] == 0) {
+            return false;
+        }
         glForwarder::setAlphaMode(true);
         glForwarder::setColor4(color[0], color[1], color[2], color[3]);
     }
     else {
         glForwarder::setColor3(color[0], color[1], color[2]);
     }
+    return true;
 }
 
 void renderSystem::unbindColor() {
@@ -166,20 +181,24 @@ void renderSystem::registerEntity(entity* object) {
     if (!object || std::find(objects.begin(), objects.end(), object) != objects.end()) {
         return;
     }
+    locker.lock();
     if (auto component = object->getComponent<renderComponent>()) {
         objects.push_back(object);
     }
     dirty = true;
+    locker.unlock();
 }
 
 void renderSystem::unregisterEntity(entity* object) {
-    auto iter = std::remove_if(objects.begin(), objects.end(), [object](const auto& element){
+    auto iter = std::find_if(objects.begin(), objects.end(), [object](const auto& element){
         return object == element;
     });
-    if (iter == objects.end()) {
-        return;
+    
+    if (iter != objects.end()) {
+        locker.lock();
+        objects.erase(iter);
+        locker.unlock();
     }
-    objects.erase(iter);
 }
 
 renderSystem* renderSystem::getInstance() {

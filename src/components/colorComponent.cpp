@@ -33,3 +33,11 @@ bool colorComponent::isAlphaMode() const {
 const color4b& colorComponent::getColor() const {
     return color;
 }
+
+bool colorComponent::isVisable() {
+    return visable;
+}
+
+void colorComponent::setVisable(bool value) {
+    visable = value;
+}

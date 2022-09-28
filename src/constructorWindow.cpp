@@ -60,28 +60,32 @@ void constructorWindow::updateWindow() {
             updateScene(dt);
         }
         if (swapLine) {
-            if (auto supervisedEntity = mouseSystem::getInstance()->getSupervisedEntity()) {
-                renderSystem::getInstance()->registerEntity(swapLine.get());
-                auto mouseSystemInstane = mouseSystem::getInstance();
-                if (auto component = supervisedEntity->getComponent<clickComponent>()) {
-                    if (component->getTypeClickComponent() == typeClickComponent::SWAP) {
-                        auto transform = supervisedEntity->getComponent<transformComponent>();
-                        auto pos = transform->getCashPos() + transform->getCashSize() / 2.f;
-                        swapLine->setPos(pos);
-                        auto mousePos = vec3f(mouseSystemInstane->getMousePosX(), mouseSystemInstane->getMousePosY());
-                        auto sizeX = std::abs(std::abs(mousePos.x()) - std::abs(pos.x()));
-                        auto sizeY = std::abs(std::abs(mousePos.y()) - std::abs(pos.y()));
-                        auto size = vec3f(2, sizeX + sizeY);
-                        swapLine->setSize(size);
-                        auto angle = vec3f::getAngle(pos, mousePos);
-                        swapLine->setRotate(0, 0, angle);
-                    }
-                }
-            }
-            else {
-                renderSystem::getInstance()->unregisterEntity(swapLine.get());
-                swapLine->setSize(0, 0);
-            }
+//            if (auto supervisedEntity = mouseSystem::getInstance()->getSupervisedEntity()) {
+//                if (swapLine->isNeedDelete()) {
+//                    swapLine->unMarkDelete();
+//                    mainScene->addChild(swapLine);
+//                }
+//                
+//                auto mouseSystemInstane = mouseSystem::getInstance();
+//                if (auto component = supervisedEntity->getComponent<clickComponent>()) {
+//                    if (component->getTypeClickComponent() == typeClickComponent::SWAP) {
+//                        auto transform = supervisedEntity->getComponent<transformComponent>();
+//                        auto pos = transform->getCashPos() + transform->getCashSize() / 2.f;
+//                        swapLine->setPos(pos);
+//                        auto mousePos = vec3f(mouseSystemInstane->getMousePosX(), mouseSystemInstane->getMousePosY());
+//                        auto sizeX = std::abs(std::abs(mousePos.x()) - std::abs(pos.x()));
+//                        auto sizeY = std::abs(std::abs(mousePos.y()) - std::abs(pos.y()));
+//                        auto size = vec3f(2, sizeX + sizeY);
+//                        swapLine->setSize(size);
+//                        auto angle = vec3f::getAngle(pos, mousePos);
+//                        swapLine->setRotate(0, 0, angle);
+//                    }
+//                }
+//            }
+//            else {
+//                swapLine->markDelete();
+//                swapLine->setSize(0, 0);
+//            }
         }
         
         
@@ -228,7 +232,7 @@ void constructorWindow::createInfoNode() {
         return;
     }
     uiNode = factoryEntity::createNode();
-    uiNode->setPos(-200.f,-100.f);
+    uiNode->setPos(-150.f,-100.f);
     uiNode->setAnchor(1.f, 1.f);
     fpsLabel = factoryEntity::createLabel();
     timeLabel = factoryEntity::createLabel();
@@ -249,7 +253,7 @@ void constructorWindow::createInfoNode() {
     swapLine->setAnchor(vec2f(0.0f,0.0f));
     swapLine->setPivot(vec2f(1.0f,1.0f));
     swapLine->getComponent<colorComponent>()->setAlphaMode(false);
-    mainScene->addChild(swapLine);
+    swapLine->markDelete();
 }
 
 void constructorWindow::destroyInfoNode() {

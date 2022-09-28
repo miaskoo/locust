@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <mutex>
 #include "componentContainer.h"
 
 class entityCash;
@@ -28,7 +29,7 @@ private:
     void setPerspective();
     void updateWindowSize();
     void renderEntity(entity* object, size_t cashIdx);
-    void bindColor(colorComponent* component);
+    bool bindColor(colorComponent* component);
     void unbindColor();
     void bindTexture(textureComponent* component);
     void unbindTexture();
@@ -48,4 +49,6 @@ private:
     bool dirty = false;
     
     static inline renderSystem* instance = nullptr;
+    
+    std::mutex locker;
 };

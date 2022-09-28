@@ -11,9 +11,12 @@ public:
     void setColor(unsigned char r, unsigned char g, unsigned char b);
     void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void setColor(color4b aColor);
+    void setVisable(bool value);
+    bool isVisable();
     const color4b& getColor() const;
     bool isAlphaMode() const;
 private:
     color4b color = {MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR};
     bool alphaMode = true;
+    bool visable = true;
 };

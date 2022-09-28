@@ -9,8 +9,7 @@
 entity::entity(dimension aType) : type(aType) {}
 
 entity::~entity() {
-    renderSystem::getInstance()->unregisterEntity(this);
-    mouseSystem::getInstance()->unregisterEntity(this);
+    unregisterSystems(this);
 }
 
 dimension entity::getDimension() const {
@@ -48,6 +47,8 @@ void entity::removeChild(entity* child) {
         return;
     }
     
+    child->unregisterSystems(this);
+    child->unregisterSystemsChilds(this);
     child->setParent({});
     childs.erase(iter);
     markDirty();
@@ -55,6 +56,7 @@ void entity::removeChild(entity* child) {
 
 void entity::setParent(std::weak_ptr<entity> aParent) {
     parent = aParent;
+    markDirty();
 }
 
 std::shared_ptr<entity> entity::getParent() {
@@ -67,13 +69,6 @@ std::shared_ptr<entityCash> entity::getCash(size_t cashIdx) {
 
 const std::vector<std::shared_ptr<entity>>& entity::getChilds() {
     return childs;
-}
-
-void entity::removeFromParent() {
-    if (auto ptr = parent.lock()) {
-        ptr->removeChild(this);
-        ptr->markDirty();
-    }
 }
 
 void entity::setWeakPtrThis(std::weak_ptr<entity> aWThis) {
@@ -102,13 +97,18 @@ void entity::update(float dt) {
         return element->isEnd();
     });
     if (forRemove != actions.end()) {
-        actions.erase(forRemove);
+        actions.erase(forRemove, actions.end());
     }
     auto forRemoveChild = std::remove_if(childs.begin(), childs.end(), [this](auto& element){
-        return element->isNeedDelete();
+        if (element->isNeedDelete()) {
+            unregisterSystems(element.get());
+            unregisterSystemsChilds(element.get());
+            return true;
+        }
+        return false;
     });
     if (forRemoveChild != childs.end()) {
-        childs.erase(forRemoveChild);
+        childs.erase(forRemoveChild, childs.end());
     }
 }
 
@@ -120,7 +120,7 @@ void entity::clearAllActions() {
     actions.clear();
 }
 
-bool entity::isDirty() const {
+bool entity::isDirtyComponents() const {
     for (const auto& component : components) {
         if (component) {
             if (component->isDirty()) {
@@ -128,15 +128,22 @@ bool entity::isDirty() const {
             }
         }
     }
-    return dirty;
+    return false;
 }
 
 void entity::markDirty() {
     dirty = true;
 }
 
+bool entity::isDirty() const {
+    return dirty;
+}
+
 void entity::unDirty() {
     dirty = false;
+}
+
+void entity::unDirtyComponents() {
     for (const auto& component : components) {
         if (component) {
             component->unDirty();
@@ -223,4 +230,21 @@ bool entity::isNeedDelete() {
 
 void entity::unMarkDelete() {
     needDelete = false;
+}
+
+void entity::unregisterSystems(entity *object) {
+    renderSystem::getInstance()->unregisterEntity(object);
+    mouseSystem::getInstance()->unregisterEntity(object);
+}
+
+void entity::registerSystems(entity *object) {
+    renderSystem::getInstance()->registerEntity(object);
+    mouseSystem::getInstance()->registerEntity(object);
+}
+
+void entity::unregisterSystemsChilds(entity *object) {
+    for (auto& child : object->getChilds()) {
+        unregisterSystemsChilds(child.get());
+        unregisterSystems(child.get());
+    }
 }

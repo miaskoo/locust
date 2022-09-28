@@ -62,7 +62,7 @@ private:
     
     int lastFps = 0;
     int currentFps = 0;
-    int lastTimeCheckFps = 0;
+    long long lastTimeCheckFps = 0;
     
     std::atomic_int mouseX = 0;
     std::atomic_int mouseY = 0;

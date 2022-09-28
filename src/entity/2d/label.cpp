@@ -15,7 +15,6 @@
 label::label() {
     addComponent<colorComponent>();
     addComponent<labelComponent>();
-    renderSystem::getInstance()->registerEntity(this);
 }
 
 void label::createCash() {

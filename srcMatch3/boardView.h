@@ -37,4 +37,6 @@ private:
     const unsigned int timeMoveAction = 250;
     const unsigned int timeFadeInAction = 200;
     const unsigned int timeFadeOutAction = 200;
+    const color4b colorFadeIn = {255,255,255,255};
+    const color4b colorFadeOut = {255,255,255,0};
 };

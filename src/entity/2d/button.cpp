@@ -12,8 +12,6 @@ button::button() {
     addComponent<textureButtonComponent>();
     addComponent<buttonComponent>();
     addComponent<spriteComponent>();
-    renderSystem::getInstance()->registerEntity(this);
-    mouseSystem::getInstance()->registerEntity(this);
 }
 
 void button::updateCash(size_t freeCashIdx, size_t busyCashIdx) {

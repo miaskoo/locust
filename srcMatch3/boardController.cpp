@@ -45,28 +45,6 @@ void boardController::deattachView() {
     view->markDelete();
 }
 
-void boardController::showBoard() {
-    if (!boardIsHide) {
-        return;
-    }
-    for (auto& child : view->getChilds()) {
-        renderSystem::getInstance()->registerEntity(child.get());
-        mouseSystem::getInstance()->registerEntity(child.get());
-    }
-    boardIsHide = false;
-}
-
-void boardController::hideBoard() {
-    if (boardIsHide) {
-        return;
-    }
-    for (auto& child : view->getChilds()) {
-        renderSystem::getInstance()->unregisterEntity(child.get());
-        mouseSystem::getInstance()->unregisterEntity(child.get());
-    }
-    boardIsHide = true;
-}
-
 void boardController::swapChip(chip *caller, chip *receiver) {
     model.swapChipMove(caller, receiver);
 }

@@ -29,6 +29,9 @@ public:
     size_t getCountAction();
     void clearAllActions();
     
+    bool isDirtyComponents() const;
+    void unDirtyComponents();
+    
     bool isDirty() const;
     void markDirty();
     void unDirty();
@@ -72,9 +75,12 @@ protected:
     
     std::array<std::shared_ptr<entityCash>, static_cast<size_t>(typeCash::COUNT)> cashArray;
     std::weak_ptr<entity> wThis;
+    
+    void registerSystems(entity* object);
+    void unregisterSystemsChilds(entity* object);
+    void unregisterSystems(entity* object);
 private:
     void removeChild(entity* child);
-    void removeFromParent();
     
     const dimension type;
     

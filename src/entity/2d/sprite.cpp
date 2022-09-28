@@ -8,7 +8,6 @@ sprite::sprite() {
     addComponent<colorComponent>();
     addComponent<textureComponent>();
     addComponent<spriteComponent>();
-    renderSystem::getInstance()->registerEntity(this);
 }
 
 

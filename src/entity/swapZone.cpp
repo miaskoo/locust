@@ -12,8 +12,6 @@ swapZone::swapZone() {
     addComponent<textureButtonComponent>();
     addComponent<swapComponent>();
     addComponent<spriteComponent>();
-    renderSystem::getInstance()->registerEntity(this);
-    mouseSystem::getInstance()->registerEntity(this);
 }
 
 void swapZone::updateCash(size_t freeCashIdx, size_t busyCashIdx) {

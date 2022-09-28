@@ -40,7 +40,6 @@ void boardScene::update(float dt) {
                 }
                 case boardSceneState::END: {
                     boardController.deattachView();
-                    boardController.hideBoard();
                     initEndGameMenu();
                     break;
                 }
@@ -48,7 +47,6 @@ void boardScene::update(float dt) {
                     destroyMenu();
                     boardController.resetBoard();
                     boardController.attachViewToEntity(wThis.lock());
-                    boardController.showBoard();
                 }
             }
             newState = currentState;
@@ -78,7 +76,7 @@ void boardScene::startGame() {
 
 void boardScene::initMainMenu() {
     menu = factoryEntity::createNode();
-    addChild(menu);
+    
     menu->setSize(constructorWindow::getInstance()->getScreenW(), constructorWindow::getInstance()->getScreenH());
     
     auto buttonStartGame = factoryEntity::createButton();
@@ -106,6 +104,8 @@ void boardScene::initMainMenu() {
     auto labelExitGame = factoryEntity::createLabel("Exit Game");
     labelExitGame->getComponent<colorComponent>()->setColor(blackColor);
     buttonExitGame->addChild(labelExitGame);
+    
+    addChild(menu);
 }
 
 void boardScene::destroyMenu() {
