@@ -47,9 +47,6 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
     for (auto& aw : chips) {
         for (auto& awh : aw) {
             auto id = awh.getId();
-            auto bindId = awh.getBindId();
-            auto object = chipSprites[id.first][id.second];
-            
             auto iter = states.find(id);
             if (iter == states.end()) {
                 states[id] = chipState::IDLE;
@@ -63,15 +60,15 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
             }
             states[id] = awh.getState();
             
+            auto& sprite = chipSprites[id.first][id.second];
             switch(awh.getState()) {
                 case chipState::HIDE: {
-                    hideChip(awh.getId());
+                    hideChip(sprite);
                     continue;
                     break;
                 }
                 case chipState::SHOW: {
-                    countAction++;
-                    showChip(awh.getId()); 
+                    showChip(sprite);
                     initViewChip(&awh);
                     continue;
                     break;
@@ -85,13 +82,18 @@ void boardView::update(const std::vector<std::vector<chip>>& chips) {
                 }
             }
             
-            auto targetPos = getPosFromId(bindId);
-            countAction++;
-            object->addAction(factoryAction::createMoveToAction(targetPos, timeMoveAction, [this](){
-                countAction--;
-            }));
+            auto bindId = awh.getBindId();
+            moveChip(sprite, bindId);
         }
     }
+}
+
+void boardView::moveChip(std::shared_ptr<entity> sprite, const pairInt& bindId) {
+    auto targetPos = getPosFromId(bindId);
+    countAction++;
+    sprite->addAction(factoryAction::createMoveToAction(targetPos, timeMoveAction, [this](){
+        countAction--;
+    }));
 }
 
 void boardView::initViewChip(const chip *aChip) {
@@ -113,30 +115,21 @@ void boardView::initViewChip(const chip *aChip) {
     sprite->getComponent<textureButtonComponent>()->setTexButtonIdx(normalTextureIdx, normalTextureIdx, normalTextureIdx);
 }
 
-void boardView::showChip(const pairInt &id) {
-    auto object = chipSprites[id.first][id.second];
-    if (!object) {
-        return;
-    }
-    
-    object->getComponent<colorComponent>()->setVisable(true);
-    object->getComponent<colorComponent>()->setColor(colorFadeOut);
-    object->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, object](){
+void boardView::showChip(std::shared_ptr<entity> sprite) {
+    sprite->getComponent<colorComponent>()->setVisable(true);
+    sprite->getComponent<colorComponent>()->setColor(colorFadeOut);
+    countAction++;
+    sprite->addAction(factoryAction::createChangeColorAction(colorFadeIn, timeFadeInAction, [this, sprite](){
         countAction--;
     }));
 }
 
-void boardView::hideChip(const pairInt &id) {
-    auto object = chipSprites[id.first][id.second];
-    if (!object) {
-        return;
-    }
-    
+void boardView::hideChip(std::shared_ptr<entity> sprite) {
+    sprite->getComponent<colorComponent>()->setColor(colorFadeIn);
     countAction++;
-    object->getComponent<colorComponent>()->setColor(colorFadeIn);
-    object->addAction(factoryAction::createChangeColorAction(colorFadeOut, timeFadeOutAction, [this, object](){
+    sprite->addAction(factoryAction::createChangeColorAction(colorFadeOut, timeFadeOutAction, [this, sprite](){
         countAction--;
-        object->getComponent<colorComponent>()->setVisable(false);
+        sprite->getComponent<colorComponent>()->setVisable(false);
     }));
 }
 

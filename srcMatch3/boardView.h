@@ -18,8 +18,9 @@ public:
     bool isHaveAction();
     std::vector<std::vector<std::shared_ptr<entity>>>& getChipButtons();
 private:
-    void showChip(const pairInt& chipId);
-    void hideChip(const pairInt& chipId);
+    void showChip(std::shared_ptr<entity> sprite);
+    void hideChip(std::shared_ptr<entity> sprite);
+    void moveChip(std::shared_ptr<entity> sprite, const pairInt& bindId);
     vec3f getPosFromId(const pairInt& chipId);
     
     std::string getTextureFromColor(chipColor color);
