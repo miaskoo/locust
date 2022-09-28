@@ -75,35 +75,53 @@ void boardScene::startGame() {
 }
 
 void boardScene::initMainMenu() {
+    initMenu(
+    "Start Game", [this](auto object) {
+        newState = boardSceneState::GAME;
+    },
+    "Exit Game", [](auto) {
+        std::exit(0);
+    });
+}
+
+void boardScene::initEndGameMenu() {
+    initMenu(
+    "Restart Game", [this](auto object) {
+        newState = boardSceneState::GAME;
+    },
+    "Exit Game", [](auto) {
+        std::exit(0);
+    });
+}
+
+void boardScene::initMenu(std::string textFirst, clickCallback callbackFirst, std::string textSecond, clickCallback callbackSecond) {
     menu = factoryEntity::createNode();
     
     menu->setSize(constructorWindow::getInstance()->getScreenW(), constructorWindow::getInstance()->getScreenH());
     
     auto buttonStartGame = factoryEntity::createButton();
-    buttonStartGame->getComponent<buttonComponent>()->setClickCallback([this](auto object) {
-        newState = boardSceneState::GAME;
-    });
+    buttonStartGame->getComponent<buttonComponent>()->setClickCallback(callbackFirst);
     buttonStartGame->setSize(200, 100);
     buttonStartGame->setAnchor(vec2f(0.5f, 0.3f));
     menu->addChild(buttonStartGame);
     
     color4b blackColor = {0,0,0,255};
     
-    auto labelStartGame = factoryEntity::createLabel("Start Game");
+    auto labelStartGame = factoryEntity::createLabel(textFirst);
     labelStartGame->getComponent<colorComponent>()->setColor(blackColor);
     buttonStartGame->addChild(labelStartGame);
+    labelStartGame->setZOrder(1);
     
     auto buttonExitGame = factoryEntity::createButton();
-    buttonExitGame->getComponent<buttonComponent>()->setClickCallback([](auto) {
-        std::exit(0);
-    });
+    buttonExitGame->getComponent<buttonComponent>()->setClickCallback(callbackSecond);
     buttonExitGame->setSize(200, 100);
     buttonExitGame->setAnchor(vec2f(0.5f, 0.7f));
     menu->addChild(buttonExitGame);
 
-    auto labelExitGame = factoryEntity::createLabel("Exit Game");
+    auto labelExitGame = factoryEntity::createLabel(textSecond);
     labelExitGame->getComponent<colorComponent>()->setColor(blackColor);
     buttonExitGame->addChild(labelExitGame);
+    labelExitGame->setZOrder(1);
     
     addChild(menu);
 }
@@ -111,36 +129,4 @@ void boardScene::initMainMenu() {
 void boardScene::destroyMenu() {
     menu->markDelete();
     menu.reset();
-}
-
-void boardScene::initEndGameMenu() {
-    menu = factoryEntity::createNode();
-    addChild(menu);
-    menu->setSize(constructorWindow::getInstance()->getScreenW(), constructorWindow::getInstance()->getScreenH());
-    
-    auto buttonStartGame = factoryEntity::createButton();
-    buttonStartGame->getComponent<buttonComponent>()->setClickCallback([this](auto object) {
-        newState = boardSceneState::GAME;
-    });
-    buttonStartGame->setSize(200, 100);
-    buttonStartGame->setAnchor(vec2f(0.5f, 0.3f));
-    menu->addChild(buttonStartGame);
-    
-    color4b blackColor = {0,0,0,255};
-    
-    auto labelStartGame = factoryEntity::createLabel("Restart Game");
-    labelStartGame->getComponent<colorComponent>()->setColor(blackColor);
-    buttonStartGame->addChild(labelStartGame);
-    
-    auto buttonExitGame = factoryEntity::createButton();
-    buttonExitGame->getComponent<buttonComponent>()->setClickCallback([this](auto) {
-        std::exit(0);
-    });
-    buttonExitGame->setSize(200, 100);
-    buttonExitGame->setAnchor(vec2f(0.5f, 0.7f));
-    menu->addChild(buttonExitGame);
-
-    auto labelExitGame = factoryEntity::createLabel("Exit Game");
-    labelExitGame->getComponent<colorComponent>()->setColor(blackColor);
-    buttonExitGame->addChild(labelExitGame);
 }

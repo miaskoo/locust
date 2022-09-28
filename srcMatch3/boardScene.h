@@ -17,6 +17,7 @@ public:
 private:
     void initMainMenu();
     void initEndGameMenu();
+    void initMenu(std::string textFirst, clickCallback callbackFirst, std::string textSecond, clickCallback callbackSecond);
     void destroyMenu();
     void swapCallback(std::shared_ptr<entity> caller, swapDirection direction);
     
