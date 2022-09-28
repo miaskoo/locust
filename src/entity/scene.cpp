@@ -40,7 +40,7 @@ void scene::update(float dt) {
 void scene::updateChilds(entity *object) {
     for (auto& child : object->getChilds()) {
         if (child->isDirty()) {
-            registerSystems(child.get());
+            child->registerSystems();
         }
         updateChilds(child.get());
     }

@@ -11,7 +11,7 @@ using namespace action;
 entity::entity(dimension aType) : type(aType) {}
 
 entity::~entity() {
-    unregisterSystems(this);
+    unregisterSystems();
 }
 
 dimension entity::getDimension() const {
@@ -49,8 +49,8 @@ void entity::removeChild(entity* child) {
         return;
     }
     
-    child->unregisterSystems(this);
-    child->unregisterSystemsChilds(this);
+    child->unregisterSystems();
+    child->unregisterSystemsChilds();
     child->setParent({});
     childs.erase(iter);
     markDirty();
@@ -103,8 +103,8 @@ void entity::update(float dt) {
     }
     auto forRemoveChild = std::remove_if(childs.begin(), childs.end(), [this](auto& element){
         if (element->isNeedDelete()) {
-            unregisterSystems(element.get());
-            unregisterSystemsChilds(element.get());
+            element->unregisterSystems();
+            element->unregisterSystemsChilds();
             return true;
         }
         return false;
@@ -234,20 +234,28 @@ void entity::unMarkDelete() {
     needDelete = false;
 }
 
-void entity::unregisterSystems(entity *object) {
-    renderSystem::getInstance()->unregisterEntity(object);
-    mouseSystem::getInstance()->unregisterEntity(object);
+void entity::unregisterSystems() {
+    if (!isSystemRegister()) {
+        return;
+    }
+    renderSystem::getInstance()->unregisterEntity(this);
+    mouseSystem::getInstance()->unregisterEntity(this);
+    setSystemRegister(false);
 }
 
-void entity::registerSystems(entity *object) {
-    renderSystem::getInstance()->registerEntity(object);
-    mouseSystem::getInstance()->registerEntity(object);
+void entity::registerSystems() {
+    if (isSystemRegister()) {
+        return;
+    }
+    renderSystem::getInstance()->registerEntity(this);
+    mouseSystem::getInstance()->registerEntity(this);
+    setSystemRegister(true);
 }
 
-void entity::unregisterSystemsChilds(entity *object) {
-    for (auto& child : object->getChilds()) {
-        unregisterSystemsChilds(child.get());
-        unregisterSystems(child.get());
+void entity::unregisterSystemsChilds() {
+    for (auto& child : getChilds()) {
+        child->unregisterSystemsChilds();
+        child->unregisterSystems();
     }
 }
 
@@ -257,4 +265,12 @@ void entity::setZOrder(unsigned int aZOrder) {
 
 unsigned int entity::getZOrder() {
     return zOrder;
+}
+
+void entity::setSystemRegister(bool value) {
+    systemRegister = value;
+}
+
+bool entity::isSystemRegister() {
+    return systemRegister;
 }

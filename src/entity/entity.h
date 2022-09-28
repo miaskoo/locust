@@ -69,6 +69,9 @@ public:
     
     void setZOrder(unsigned int aZOrder);
     unsigned int getZOrder();
+    
+    void registerSystems();
+    void unregisterSystems();
 protected:
     entity() = delete;
     entity(dimension aType);
@@ -80,9 +83,9 @@ protected:
     std::array<std::shared_ptr<entityCash>, static_cast<size_t>(typeCash::COUNT)> cashArray;
     std::weak_ptr<entity> wThis;
     
-    void registerSystems(entity* object);
-    void unregisterSystemsChilds(entity* object);
-    void unregisterSystems(entity* object);
+    void unregisterSystemsChilds();
+    void setSystemRegister(bool value);
+    bool isSystemRegister();
 private:
     void removeChild(entity* child);
     
@@ -97,4 +100,5 @@ private:
     bool ignoreSorting = false;
     bool needDelete = false;
     unsigned int zOrder = 0U;
+    bool systemRegister = false;
 };
