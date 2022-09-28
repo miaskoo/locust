@@ -76,7 +76,8 @@ void boardScene::startGame() {
 
 void boardScene::initMainMenu() {
     initMenu(
-    "Start Game", [this](auto object) {
+    "Start Game", [this](std::shared_ptr<entity> object) {
+        object->getComponent<clickComponent>()->setClickable(false);
         newState = boardSceneState::GAME;
     },
     "Exit Game", [](auto) {
@@ -86,7 +87,8 @@ void boardScene::initMainMenu() {
 
 void boardScene::initEndGameMenu() {
     initMenu(
-    "Restart Game", [this](auto object) {
+    "Restart Game", [this](std::shared_ptr<entity> object) {
+        object->getComponent<clickComponent>()->setClickable(false);
         newState = boardSceneState::GAME;
     },
     "Exit Game", [](auto) {
