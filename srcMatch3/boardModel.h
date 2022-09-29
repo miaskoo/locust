@@ -64,7 +64,7 @@ private:
     std::vector<chip*> freeChipPool;
     std::vector<std::vector<chipPlace>> chipPlacePool;
     
-    std::vector<chip*> dirtyChips;
+    std::set<chip*> dirtyChips;
     std::set<int> fallRows;
     
     const unsigned int needChipForMatch3 = 2U;

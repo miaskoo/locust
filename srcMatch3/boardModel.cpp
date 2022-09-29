@@ -187,20 +187,19 @@ void boardModel::clearFree() {
 
 
 void boardModel::addChipToDirty(chip *dirty) {
-    auto iter = std::find(dirtyChips.begin(), dirtyChips.end(), dirty);
-    if (iter == dirtyChips.end()) {
-        dirtyChips.push_back(dirty);
-    }
+    dirtyChips.insert(dirty);
 }
 
 void boardModel::removeСleanСhipsFromDirty() {
-    auto iter = std::remove_if(dirtyChips.begin(), dirtyChips.end(), [](auto& element){
-        return element->getState() == chipState::IDLE;
-    });
-    if (iter == dirtyChips.end()) {
-        return;
+    for (auto dirtyChipsIter = dirtyChips.begin(); dirtyChipsIter != dirtyChips.end();) {
+        if ((*dirtyChipsIter)->getState() == chipState::IDLE) {
+            dirtyChipsIter = dirtyChips.erase(dirtyChipsIter);
+        }
+        else {
+            dirtyChipsIter++;
+        }
     }
-    dirtyChips.erase(iter);
+    
 }
 
 chipPlace* boardModel::getPlaceForCreate(unsigned int column) {
