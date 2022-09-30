@@ -54,9 +54,6 @@ void renderSystem::updateWindowSize() {
 }
 
 void renderSystem::update(size_t cashIdx) {
-    if (!locker.try_lock()) {
-        return;
-    }
     if (dirty) {
         sortEntityForRender();
         dirty = false;
@@ -79,8 +76,6 @@ void renderSystem::update(size_t cashIdx) {
     }
     
     glutSwapBuffers();
-    
-    locker.unlock();
 }
 
 void renderSystem::renderEntity(entity* object, size_t cashIdx) {
@@ -181,12 +176,10 @@ void renderSystem::registerEntity(entity* object) {
     if (!object || std::find(objects.begin(), objects.end(), object) != objects.end()) {
         return;
     }
-    locker.lock();
     if (auto component = object->getComponent<renderComponent>()) {
         objects.push_back(object);
     }
     dirty = true;
-    locker.unlock();
 }
 
 void renderSystem::unregisterEntity(entity* object) {
@@ -195,9 +188,7 @@ void renderSystem::unregisterEntity(entity* object) {
     });
     
     if (iter != objects.end()) {
-        locker.lock();
         objects.erase(iter);
-        locker.unlock();
     }
 }
 
@@ -229,13 +220,7 @@ void renderSystem::unbindMatrix() {
 }
 
 void renderSystem::sortEntityForRender() {
-    std::sort(objects.begin(), objects.end(), [](const auto& a, const auto& b){
-        if (a->isIgnoreSorting()) {
-            return true;
-        }
-        if (b->isIgnoreSorting()) {
-            return false;
-        }
+    std::sort(objects.begin(), objects.end(), [](const auto& a, const auto& b) {
         const auto aD = static_cast<size_t>(a->getDimension());
         const auto bD = static_cast<size_t>(b->getDimension());
         if (aD != bD) {

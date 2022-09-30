@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <mutex>
 #include "componentContainer.h"
 
 class entityCash;
@@ -50,6 +49,4 @@ private:
     bool dirty = false;
     
     static inline renderSystem* instance = nullptr;
-    
-    std::mutex locker;
 };

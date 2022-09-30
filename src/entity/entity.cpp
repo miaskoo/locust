@@ -10,10 +10,6 @@ using namespace action;
 
 entity::entity(dimension aType) : type(aType) {}
 
-entity::~entity() {
-    unregisterSystems();
-}
-
 dimension entity::getDimension() const {
     return type;
 }
@@ -34,31 +30,12 @@ void entity::addChild(std::shared_ptr<entity>& child) {
     }
     childs.push_back(child);
     child->setParent(wThis);
-    markDirty();
-}
-
-void entity::removeChild(entity* child) {
-    if (!child) {
-        return;
-    }
-    
-    auto iter = std::find_if(childs.begin(), childs.end(), [&child](auto& element){
-        return child == element.get();
-    });
-    if (iter == childs.end()) {
-        return;
-    }
-    
-    child->unregisterSystems();
-    child->unregisterSystemsChilds();
-    child->setParent({});
-    childs.erase(iter);
-    markDirty();
+    child->markDirty();
+    child->markDirtyChilds();
 }
 
 void entity::setParent(std::weak_ptr<entity> aParent) {
     parent = aParent;
-    markDirty();
 }
 
 std::shared_ptr<entity> entity::getParent() {
@@ -101,17 +78,6 @@ void entity::update(float dt) {
     if (forRemove != actions.end()) {
         actions.erase(forRemove, actions.end());
     }
-    auto forRemoveChild = std::remove_if(childs.begin(), childs.end(), [this](auto& element){
-        if (element->isNeedDelete()) {
-            element->unregisterSystems();
-            element->unregisterSystemsChilds();
-            return true;
-        }
-        return false;
-    });
-    if (forRemoveChild != childs.end()) {
-        childs.erase(forRemoveChild, childs.end());
-    }
 }
 
 void entity::addAction(actionBase *action) {
@@ -151,14 +117,6 @@ void entity::unDirtyComponents() {
             component->unDirty();
         }
     }
-}
-
-void entity::setIgnoreSorting(bool value) {
-    ignoreSorting = value;
-}
-
-bool entity::isIgnoreSorting() const {
-    return ignoreSorting;
 }
 
 transformComponentInterface* entity::getTransformComponent() {
@@ -234,31 +192,6 @@ void entity::unMarkDelete() {
     needDelete = false;
 }
 
-void entity::unregisterSystems() {
-    if (!isSystemRegister()) {
-        return;
-    }
-    renderSystem::getInstance()->unregisterEntity(this);
-    mouseSystem::getInstance()->unregisterEntity(this);
-    setSystemRegister(false);
-}
-
-void entity::registerSystems() {
-    if (isSystemRegister()) {
-        return;
-    }
-    renderSystem::getInstance()->registerEntity(this);
-    mouseSystem::getInstance()->registerEntity(this);
-    setSystemRegister(true);
-}
-
-void entity::unregisterSystemsChilds() {
-    for (auto& child : getChilds()) {
-        child->unregisterSystemsChilds();
-        child->unregisterSystems();
-    }
-}
-
 void entity::setZOrder(unsigned int aZOrder) {
     zOrder = aZOrder;
 }
@@ -267,17 +200,45 @@ unsigned int entity::getZOrder() {
     return zOrder;
 }
 
-void entity::setSystemRegister(bool value) {
-    systemRegister = value;
-}
-
-bool entity::isSystemRegister() {
-    return systemRegister;
-}
-
 void entity::markDirtyChilds() {
     for (auto& child : childs) {
-        child->markDirty();
         child->markDirtyChilds();
+    }
+}
+
+void entity::removeEntity(std::list<std::shared_ptr<entity>>& removedEntity, bool withoutCheck) {
+    if (withoutCheck) {
+        std::copy(childs.begin(), childs.end(), std::back_inserter(removedEntity));
+        for (auto& child : childs) {
+            child->removeEntity(removedEntity, withoutCheck);
+        }
+    }
+    else {
+        auto forRemoveChild = std::remove_if(childs.begin(), childs.end(), [&removedEntity, this](auto& element){
+            if (element->isNeedDelete()) {
+                removedEntity.push_back(element);
+                element->removeEntity(removedEntity, true);
+                return true;
+            }
+            return false;
+        });
+        childs.erase(forRemoveChild, childs.end());
+    }
+}
+
+void entity::getAddedEntity(std::list<std::shared_ptr<entity>> &addedEntity, bool withoutCheck) {
+    if (withoutCheck) {
+        std::copy(childs.begin(), childs.end(), std::back_inserter(addedEntity));
+        for (auto& child : childs) {
+            child->getAddedEntity(addedEntity, true);
+        }
+    }
+    else {
+        for (auto& child : childs) {
+            if (child->isDirty()) {
+                addedEntity.push_back(child);
+                child->getAddedEntity(addedEntity, true);
+            }
+        }
     }
 }

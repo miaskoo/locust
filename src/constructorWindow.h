@@ -80,6 +80,8 @@ private:
     
     std::atomic_bool switchCash = false;
     std::atomic_bool cashDirty = false;
+    std::atomic_bool renderLock = false;
+    std::atomic_bool renderIsLock = false;
     
     bufferController cBuffer;
     textureController cTexture;

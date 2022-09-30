@@ -188,7 +188,6 @@ struct vec {
         return result;
     }
     
-
     vec operator-(const vec& aValue) const {
         vec result;
         for (size_t n = 0U; n < countVec; n++) {

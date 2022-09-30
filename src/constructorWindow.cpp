@@ -62,6 +62,7 @@ void constructorWindow::updateWindow() {
         if (swapLine) {
             if (auto supervisedEntity = mouseSystem::getInstance()->getSupervisedEntity()) {
                 swapLine->getComponent<colorComponent>()->setVisable(true);
+                swapLine->getComponent<colorComponent>()->setColor(255, 255, 255,255);
                 
                 auto mouseSystemInstane = mouseSystem::getInstance();
                 if (auto component = supervisedEntity->getComponent<clickComponent>()) {
@@ -114,6 +115,33 @@ void constructorWindow::updateScene(float dt) {
         switchCash.store(!switchCash.load());
         cashDirty.store(true);
     }
+    std::list<std::shared_ptr<entity>> container;
+    mainScene->getAddedEntity(container, false);
+    if (!container.empty()) {
+        renderLock.store(true);
+        while (!renderIsLock.load()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(minDtFpsMs)));
+        }
+        for (auto& object : container) {
+            renderSystem::getInstance()->registerEntity(object.get());
+            mouseSystem::getInstance()->registerEntity(object.get());
+            object->unDirty();
+        }
+        container.clear();
+    }
+    
+    mainScene->removeEntity(container, false);
+    if (!container.empty()) {
+        renderLock.store(true);
+        while (!renderIsLock.load()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(minDtFpsMs)));
+        }
+        for (auto& object : container) {
+            renderSystem::getInstance()->unregisterEntity(object.get());
+            mouseSystem::getInstance()->unregisterEntity(object.get());
+        }
+    }
+    renderLock.store(false);
 }
 
 size_t constructorWindow::getCashIdx(typeCash type) {
@@ -128,11 +156,14 @@ size_t constructorWindow::getCashIdx(typeCash type) {
 
 void constructorWindow::renderScene() {
     if (currentFps < lockFps) {
-        if (cashDirty.load()) {
-            cashDirty.store(false);
-        }
-        renderSystem::getInstance()->update(getCashIdx(typeCash::BUSY));
         currentFps++;
+        if (renderLock.load()) {
+            renderIsLock.store(true);
+            return;
+        }
+        renderIsLock.store(false);
+        cashDirty.store(false);
+        renderSystem::getInstance()->update(getCashIdx(typeCash::BUSY));
     }
 }
 

@@ -12,7 +12,6 @@ public:
     void createNewCash(entity* obj, std::list<std::shared_ptr<entityCash>>& cashList);
     void checkDirty(entity* obj, bool& result);
     virtual void update(float dt) override;
-    void updateChilds(entity* object);
 protected:
     void updateCashChilds(size_t freeCashIdx, size_t busyCashIdx, entity* obj);
 };

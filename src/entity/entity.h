@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <list>
 #include "struct.h"
 #include "componentContainer.h"
 #include "actionBase.h"
@@ -17,7 +18,7 @@ protected:
 class entity : public componentContainer {
     friend class factoryEntity;
 public:
-    ~entity();
+    ~entity() = default;
     dimension getDimension() const;
     
     std::shared_ptr<entity> getParent();
@@ -31,16 +32,10 @@ public:
     void clearAllActions();
     
     bool isDirtyComponents() const;
-    void unDirtyComponents();
-    
     bool isDirty() const;
-    void markDirty();
-    void markDirtyChilds();
+    void unDirtyComponents();
     void unDirty();
-    
-    void setIgnoreSorting(bool value);
-    bool isIgnoreSorting() const;
-    
+
     virtual void updateCash(size_t freeCashIdx, size_t busyCashIdx) = 0;
     
     std::shared_ptr<entityCash> getCash(size_t cashIdx);
@@ -71,8 +66,8 @@ public:
     void setZOrder(unsigned int aZOrder);
     unsigned int getZOrder();
     
-    void registerSystems();
-    void unregisterSystems();
+    void getAddedEntity(std::list<std::shared_ptr<entity>>& addedEntity, bool withoutCheck);
+    void removeEntity(std::list<std::shared_ptr<entity>>& removedEntity, bool withoutCheck);
 protected:
     entity() = delete;
     entity(dimension aType);
@@ -84,11 +79,9 @@ protected:
     std::array<std::shared_ptr<entityCash>, static_cast<size_t>(typeCash::COUNT)> cashArray;
     std::weak_ptr<entity> wThis;
     
-    void unregisterSystemsChilds();
-    void setSystemRegister(bool value);
-    bool isSystemRegister();
 private:
-    void removeChild(entity* child);
+    void markDirty();
+    void markDirtyChilds();
     
     const dimension type;
     
@@ -98,7 +91,6 @@ private:
     std::vector<std::shared_ptr<action::actionBase>> actions;
     
     bool dirty = false;
-    bool ignoreSorting = false;
     bool needDelete = false;
     unsigned int zOrder = 0U;
     bool systemRegister = false;
