@@ -116,12 +116,12 @@ void constructorWindow::updateScene(float dt) {
         cashDirty.store(true);
     }
     std::list<std::shared_ptr<entity>> container;
+    bool alreadyLock = false;
     mainScene->getAddedEntity(container, false);
     if (!container.empty()) {
-        renderLock.store(true);
-        while (!renderIsLock.load()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(minDtFpsMs)));
-        }
+        lockerRender.lock();
+        alreadyLock = true;
+        
         for (auto& object : container) {
             renderSystem::getInstance()->registerEntity(object.get());
             mouseSystem::getInstance()->registerEntity(object.get());
@@ -132,16 +132,18 @@ void constructorWindow::updateScene(float dt) {
     
     mainScene->removeEntity(container, false);
     if (!container.empty()) {
-        renderLock.store(true);
-        while (!renderIsLock.load()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(minDtFpsMs)));
+        if (!alreadyLock) {
+            lockerRender.lock();
+            alreadyLock = true;
         }
         for (auto& object : container) {
             renderSystem::getInstance()->unregisterEntity(object.get());
             mouseSystem::getInstance()->unregisterEntity(object.get());
         }
     }
-    renderLock.store(false);
+    if (alreadyLock) {
+        lockerRender.unlock();
+    }
 }
 
 size_t constructorWindow::getCashIdx(typeCash type) {
@@ -157,13 +159,12 @@ size_t constructorWindow::getCashIdx(typeCash type) {
 void constructorWindow::renderScene() {
     if (currentFps < lockFps) {
         currentFps++;
-        if (renderLock.load()) {
-            renderIsLock.store(true);
+        if (!lockerRender.try_lock()) {
             return;
         }
-        renderIsLock.store(false);
         cashDirty.store(false);
         renderSystem::getInstance()->update(getCashIdx(typeCash::BUSY));
+        lockerRender.unlock();
     }
 }
 

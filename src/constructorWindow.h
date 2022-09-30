@@ -3,6 +3,7 @@
 #include "factoryScene.h"
 #include "struct.h"
 #include <atomic>
+#include <mutex>
 #include "textureController.h"
 #include "bufferController.h"
 
@@ -80,8 +81,7 @@ private:
     
     std::atomic_bool switchCash = false;
     std::atomic_bool cashDirty = false;
-    std::atomic_bool renderLock = false;
-    std::atomic_bool renderIsLock = false;
+    std::mutex lockerRender;
     
     bufferController cBuffer;
     textureController cTexture;
