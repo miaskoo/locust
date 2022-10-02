@@ -109,18 +109,22 @@ void constructorWindow::updateScene(float dt) {
         return;
     }
     bool dirty = false;
+    bool alreadyLock = false;
     mainScene->checkDirty(mainScene.get(), dirty);
     if (dirty) {
         mainScene->updateCash(getCashIdx(typeCash::FREE), getCashIdx(typeCash::BUSY));
-        switchCash.store(!switchCash.load());
+        lockerRender.lock();
+        switchCash = !switchCash;
+        lockerRender.unlock();
         cashDirty.store(true);
     }
     std::list<std::shared_ptr<entity>> container;
-    bool alreadyLock = false;
     mainScene->getAddedEntity(container, false);
     if (!container.empty()) {
-        lockerRender.lock();
-        alreadyLock = true;
+        if (!alreadyLock) {
+            lockerRender.lock();
+            alreadyLock = true;
+        }
         
         for (auto& object : container) {
             renderSystem::getInstance()->registerEntity(object.get());
@@ -147,7 +151,7 @@ void constructorWindow::updateScene(float dt) {
 }
 
 size_t constructorWindow::getCashIdx(typeCash type) {
-    if (switchCash.load()) {
+    if (switchCash) {
         if (type == typeCash::FREE) {
             return static_cast<size_t>(typeCash::BUSY);
         }
@@ -158,10 +162,8 @@ size_t constructorWindow::getCashIdx(typeCash type) {
 
 void constructorWindow::renderScene() {
     if (currentFps < lockFps) {
+        lockerRender.lock();
         currentFps++;
-        if (!lockerRender.try_lock()) {
-            return;
-        }
         cashDirty.store(false);
         renderSystem::getInstance()->update(getCashIdx(typeCash::BUSY));
         lockerRender.unlock();

@@ -79,9 +79,10 @@ private:
     
     std::shared_ptr<entity> swapLine;
     
-    std::atomic_bool switchCash = false;
+    bool switchCash = false;
     std::atomic_bool cashDirty = false;
     std::mutex lockerRender;
+    std::mutex isRender;
     
     bufferController cBuffer;
     textureController cTexture;
