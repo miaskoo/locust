@@ -52,6 +52,7 @@ std::shared_ptr<entity> factoryEntity::createQuadrilateral() {
     result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f, 1.f});
+    component->setSize({1.f, 1.f, 1.f});
     component->setAnchor({0.5f,0.5f,0.0f});
     component->setPivot({0.5f,0.5f,0.0f});
     result->createCash();
@@ -63,6 +64,7 @@ std::shared_ptr<entity> factoryEntity::createTorus(size_t countSector) {
     result->setWeakPtrThis(result);
     auto component = result->getTransformComponent();
     component->setScale({1.f, 1.f, 1.f});
+    component->setSize({1.f, 1.f, 1.f});
     component->setAnchor({0.5f,0.5f,0.0f});
     component->setPivot({0.5f,0.5f,0.0f});
     result->createCash();
@@ -80,6 +82,7 @@ std::shared_ptr<entity> factoryEntity::createSprite(const std::string& dirTextur
     auto component = result->getTransformComponent();
     component->setAnchor({0.5f,0.5f});
     component->setPivot({0.5f,0.5f});
+    component->setSize({1.f, 1.f});
     component->setScale({1.f,1.f});
     
     result->getComponent<textureComponent>()->setTexIdx(constructorWindow::getInstance()->getTextureController()->getTextureIdx(dirTexture));
@@ -94,6 +97,7 @@ std::shared_ptr<entity> factoryEntity::createButton(const std::string& dirTextur
     component->setScale({1.f, 1.f});
     component->setAnchor({0.5, 0.5});
     component->setPivot({0.5, 0.5});
+    component->setSize({1.f, 1.f});
     
     auto texController = constructorWindow::getInstance()->getTextureController();
     result->getComponent<textureButtonComponent>()->setTexButtonIdx(
@@ -111,6 +115,7 @@ std::shared_ptr<entity> factoryEntity::createSwapZone(const std::string& dirText
     component->setScale({1.f, 1.f});
     component->setAnchor({0.5, 0.5});
     component->setPivot({0.5, 0.5});
+    component->setSize({1.f, 1.f});
     
     auto texController = constructorWindow::getInstance()->getTextureController();
     result->getComponent<textureButtonComponent>()->setTexButtonIdx(
