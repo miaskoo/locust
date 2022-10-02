@@ -7,40 +7,15 @@ bufferIdx factoryBuffer::createTorusBuffer(int countSector) {
     // |    |
     // |    |
     // p4--p3
-    unsigned int vboIdx = 0;
-    unsigned int vaoIdx = 0;
-    unsigned int eboIdx = 0;
     const float sectorStep = 2.f * 3.14159f / countSector;
     const float widthTriangles = 1;
     float xy = cosf(90.f);
-    const int countDimension = 3;
-    const int countDimensionTex = 2;
-    const int cointVerticesForQuad = 4;
-    const int countVerticesForQuads = countDimension * cointVerticesForQuad * countSector;
-    const int countVecticesForTex = countDimensionTex * cointVerticesForQuad * countSector;
-    
-    
-    const int countVertices = countVerticesForQuads + countVecticesForTex;
-    const int countIndices = countSector * cointVerticesForQuad * countDimension;
-    auto vertices = new float[countVertices];
-    auto indices = new unsigned char[countIndices];
+    std::vector<vec3f> vertices;
+    std::vector<vec2f> textureCoordinate;
+    std::vector<unsigned int> indices;
     
     const float z1 = widthTriangles / 2.f;
     const float z2 = -z1;
-    
-    
-    int idxVertices = 0;
-    int idxIndices = 0;
-    auto setDataVertices = [&vertices, &idxVertices](vec3f pos, vec2f tex){
-        for (size_t n = 0U; n < pos.size(); n++) {
-            vertices[idxVertices] = pos[n];
-            idxVertices++;
-        }
-        for (size_t n = 0U; n < tex.size(); n++) {
-            vertices[idxVertices] = tex[n];
-            idxVertices++;
-        }
-    };
     
     float whTex = 0.25f;
     vec2f posTex[8];
@@ -95,39 +70,63 @@ bufferIdx factoryBuffer::createTorusBuffer(int countSector) {
         // |    |
         // |    |
         // p4--p3
-        setDataVertices(p1, p1tex);
-        setDataVertices(p2, p2tex);
-        setDataVertices(p3, p3tex);
-        setDataVertices(p4, p4tex);
-    }
-    
-    auto setDataIndices = [&idxIndices, &indices, countSector = countSector](size_t idx, size_t numPoint){
-        if (countSector * 2 <= idx + numPoint) {
-            numPoint -= countSector * 2;
-            
-        }
-        indices[idxIndices] = idx + numPoint;
-        idxIndices++;
-    };
-    
-    for (int i = 0, idxPoint = 0; i < countSector * 2; i++, idxPoint+=4) {
-        setDataIndices(idxPoint, 0);
-        setDataIndices(idxPoint, 2);
-        setDataIndices(idxPoint, 1);
+        vertices.push_back(p1);
+        vertices.push_back(p2);
+        vertices.push_back(p3);
+        vertices.push_back(p4);
         
-        setDataIndices(idxPoint, 2);
-        setDataIndices(idxPoint, 3);
-        setDataIndices(idxPoint, 1);
+        textureCoordinate.push_back(p1tex);
+        textureCoordinate.push_back(p2tex);
+        textureCoordinate.push_back(p3tex);
+        textureCoordinate.push_back(p4tex);
     }
 
-    vaoIdx = glForwarder::genVertexArray();
-    vboIdx = glForwarder::genBufferArray();
-    eboIdx = glForwarder::genBufferArray();
+    for (auto i = 0U, idxPoint = 0U; i < countSector; i++, idxPoint+=4U) {
+        indices.push_back(idxPoint);
+        indices.push_back(idxPoint + 2U);
+        indices.push_back(idxPoint + 1U);
+        
+        indices.push_back(idxPoint + 2U);
+        indices.push_back(idxPoint + 3U);
+        indices.push_back(idxPoint + 1U);
+    }
+
+    return generateBufferIdx(vertices, textureCoordinate, indices);
+}
+
+
+bufferIdx factoryBuffer::generateBufferIdx(const std::vector<vec3f>& verticesVector, const std::vector<vec2f>& textureCoordinateVector, const std::vector<unsigned int>& indicesVector) {
+    if (verticesVector.size() != textureCoordinateVector.size()) {
+        assert(false && "verticesVector and textureCoordinateVector size not the same");
+    }
+    
+    const auto countVertices = verticesVector.size() * 3 + textureCoordinateVector.size() * 2;
+    const auto countIndices = indicesVector.size();
+    float* vertices = new float[countVertices];
+    unsigned int* indices = new unsigned int[countIndices];
+    
+    for (auto n = 0U, idx = 0U; n < verticesVector.size(); n++, idx+=5) {
+        for (auto i = 0U; i < verticesVector[n].size(); i++) {
+            vertices[idx + i] = verticesVector[n][i];
+        }
+        for (auto i = 0U, offset = 3U; i < textureCoordinateVector[n].size(); i++) {
+            vertices[idx + i + offset] = textureCoordinateVector[n][i];
+        }
+    }
+    
+    for (auto n = 0U; n < indicesVector.size(); n++) {
+        auto value = indicesVector[n];
+        indices[n] = value;
+    }
+    
+    unsigned int vaoIdx = glForwarder::genVertexArray();
+    unsigned int vboIdx = glForwarder::genBufferArray();
+    unsigned int eboIdx = glForwarder::genBufferArray();
     
     glForwarder::bindVertexArray(vaoIdx);
     
     glForwarder::copyBufferArrayToGlStatic(vboIdx, vertices, countVertices * sizeof(float));
-    glForwarder::copyBufferElementArrayToGlStatic(eboIdx, indices, countIndices * sizeof(unsigned char));
+    glForwarder::copyBufferElementArrayToGlStatic(eboIdx, indices, countIndices * sizeof(unsigned int));
     
     
     glForwarder::addVertexAttribPointerFloat(0, 3, 5, 0);
@@ -141,8 +140,9 @@ bufferIdx factoryBuffer::createTorusBuffer(int countSector) {
     buff.ebo = eboIdx;
     buff.countIdx = countIndices;
     
+
     delete[] vertices;
     delete[] indices;
-    
+
     return buff;
 }

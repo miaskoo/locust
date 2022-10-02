@@ -57,7 +57,7 @@ void glForwarder::addVertexAttribPointerFloat(unsigned int idxAttrib, unsigned i
 }
 
 void glForwarder::drawTriangleElements(unsigned int countElements) {
-    glDrawElements(GL_TRIANGLES, countElements, GL_UNSIGNED_BYTE, 0);
+    glDrawElements(GL_TRIANGLES, countElements, GL_UNSIGNED_INT, 0);
 }
 
 void glForwarder::setCullfaceMode(bool value) {
